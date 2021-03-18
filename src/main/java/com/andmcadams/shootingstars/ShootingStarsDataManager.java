@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2019, Weird Gloop <admin@weirdgloop.org>
+ * Copyright (c) 2021, Andrew McAdams
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
