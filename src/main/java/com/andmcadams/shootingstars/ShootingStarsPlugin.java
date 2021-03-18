@@ -137,7 +137,6 @@ public class ShootingStarsPlugin extends Plugin
 			{
 				String text = chatbox.getText();
 				text = text.replace("<br>", " ");
-				log.info(text);
 
 				Matcher m = firstMinThenHour.matcher(text);
 				if (m.find())
@@ -162,10 +161,6 @@ public class ShootingStarsPlugin extends Plugin
 					int maxTime = Integer.parseInt(m.group(2));
 					recordEvent(loc, world, minTime, maxTime);
 					return;
-				}
-				else
-				{
-					lastLoc = null;
 				}
 			}
 		}
