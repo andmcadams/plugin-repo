@@ -4,16 +4,21 @@ import net.runelite.client.config.Config;
 import net.runelite.client.config.ConfigGroup;
 import net.runelite.client.config.ConfigItem;
 
-@ConfigGroup("shootingstars")
+@ConfigGroup(ShootingStarsPlugin.CONFIG_GROUP_KEY)
 public interface ShootingStarsConfig extends Config
 {
-	@ConfigItem(
-		keyName = "greeting",
-		name = "Welcome Greeting",
-		description = "The message to show to the user when they login"
-	)
-	default String greeting()
+	String SHOOTING_STAR_POST_ENDPOINT_KEYNAME = "post endpoint";
+	String SHOOTING_STAR_GET_ENDPOINT_KEYNAME = "get endpoint";
+
+	@ConfigItem(keyName = SHOOTING_STAR_POST_ENDPOINT_KEYNAME, name = "POST endpoint", description = "Web endpoint to post star data to")
+	default String shootingStarPostEndpointConfig()
 	{
-		return "Hello";
+		return "";
+	}
+
+	@ConfigItem(keyName = SHOOTING_STAR_GET_ENDPOINT_KEYNAME, name = "GET endpoint", description = "Web endpoint to get star data from")
+	default String shootingStarGetEndpointConfig()
+	{
+		return "";
 	}
 }
