@@ -71,7 +71,7 @@ public class ShootingStarsData
 		else if(hours == 2)
 			timeStringBuilder.append(hours).append(" hours ");
 		long minutes = d.toMinutes() % 60;
-		if (hours == 0 && minutes == 0)
+		if (hours == 0 && minutes <= 0)
 			timeStringBuilder.append("Now");
 		else
 			timeStringBuilder.append(String.format("%d minutes", minutes));
