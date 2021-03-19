@@ -37,6 +37,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Client;
+import net.runelite.api.GameState;
 import net.runelite.api.events.GameTick;
 import net.runelite.api.widgets.Widget;
 import net.runelite.client.callback.ClientThread;
@@ -229,7 +230,8 @@ public class ShootingStarsPlugin extends Plugin
 	)
 	public void hitAPI()
 	{
-		manager.hitAPI();
+		if (client.getGameState() == GameState.LOGGED_IN)
+			manager.hitAPI();
 	}
 
 }
