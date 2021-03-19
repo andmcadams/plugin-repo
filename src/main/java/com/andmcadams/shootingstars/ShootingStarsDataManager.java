@@ -23,7 +23,6 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
 package com.andmcadams.shootingstars;
 
 import com.google.gson.Gson;
@@ -112,7 +111,7 @@ public class ShootingStarsDataManager
 		}
 	}
 
-	private List<ShootingStarsData> parseData(JsonArray j)
+	private ArrayList<ShootingStarsData> parseData(JsonArray j)
 	{
 		ArrayList<ShootingStarsData> l = new ArrayList<>();
 		for (JsonElement jsonElement : j)

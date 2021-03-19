@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021, Andrew McAdams
+ * Copyright (c) 2017, Adam <Adam@sigterm.info>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -24,52 +24,16 @@
  */
 package com.andmcadams.shootingstars;
 
-import lombok.Getter;
+import java.awt.Dimension;
+import javax.swing.JPanel;
+import net.runelite.client.ui.PluginPanel;
 
-public enum ShootingStarsLocation
+class FixedWidthPanel extends JPanel
 {
-	ASGARNIA(0, "Asgarnia"),
-	KARAMJA(1, "Crandor or Karamja"),
-	FELDIP_HILLS(2, "Feldip Hills or on the Isle of Souls"),
-	FOSSIL_ISLAND(3, "Fossil Island or on Mos Le'Harmless"),
-	FREMENNIK(4, "Fremennik Lands or on Lunar Isle"),
-	KOUREND(5, "Great Kourend"),
-	KANDARIN(6, "Kandarin"),
-	KEBOS(7, "Kebos Lowlands"),
-	KHARIDIAN_DESERT(8, "Kharidian Desert"),
-	MISTHALIN(9, "Misthalin"),
-	MORYTANIA(10, "Morytania"),
-	PISCATORIS(11, "Piscatoris or the Gnome Stronghold"),
-	TIRANNWN(12, "Tirannwn"),
-	WILDERNESS(13, "Wilderness"),
-	UNKNOWN(14, "Unknown");
-
-	@Getter
-	private int id;
-	@Getter
-	private String name;
-
-	ShootingStarsLocation(int id, String name)
+	@Override
+	public Dimension getPreferredSize()
 	{
-		this.id = id;
-		this.name = name;
+		return new Dimension(PluginPanel.PANEL_WIDTH, super.getPreferredSize().height);
 	}
 
-	public static ShootingStarsLocation determineLocation(String text)
-	{
-		text = text.replace("<br>", " ");
-		for (ShootingStarsLocation l : values())
-			if(text.contains(l.name))
-				return l;
-		return ShootingStarsLocation.UNKNOWN;
-	}
-
-	public static ShootingStarsLocation getLocation(int id)
-	{
-		for (ShootingStarsLocation l : values())
-			if(l.getId() == id)
-				return l;
-
-		return ShootingStarsLocation.UNKNOWN;
-	}
 }

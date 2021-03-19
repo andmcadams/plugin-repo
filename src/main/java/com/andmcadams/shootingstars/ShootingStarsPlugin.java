@@ -25,25 +25,31 @@
 package com.andmcadams.shootingstars;
 
 import com.google.inject.Provides;
+import java.awt.image.BufferedImage;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.inject.Inject;
+import javax.swing.SwingUtilities;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Client;
 import net.runelite.api.events.GameTick;
 import net.runelite.api.widgets.Widget;
+import net.runelite.client.callback.ClientThread;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.events.ConfigChanged;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
 import net.runelite.client.task.Schedule;
-import net.runelite.client.ui.overlay.OverlayManager;
+import net.runelite.client.ui.ClientToolbar;
+import net.runelite.client.ui.NavigationButton;
+import net.runelite.client.util.ImageUtil;
 
 @Slf4j
 @PluginDescriptor(
@@ -60,13 +66,13 @@ public class ShootingStarsPlugin extends Plugin
 	private ShootingStarsDataManager manager;
 
 	@Inject
-	private OverlayManager overlayManager;
-
-	@Inject
-	private ShootingStarsOverlayPanel overlayPanel;
-
-	@Inject
 	private ShootingStarsConfig config;
+
+	@Inject
+	private ClientToolbar clientToolbar;
+
+	@Inject
+	private ClientThread clientThread;
 
 	private final int SECONDS_BETWEEN_UPLOADS = 10;
 	private final int SECONDS_BETWEEN_GET = 30;
@@ -77,8 +83,7 @@ public class ShootingStarsPlugin extends Plugin
 	static final String CONFIG_GROUP_KEY = "shootingstar";
 
 	@Getter
-	@Setter
-	private List<ShootingStarsData> starData = null;
+	private ArrayList<ShootingStarsData> starData = null;
 
 	@Getter
 	private String shootingStarPostEndpoint;
@@ -97,6 +102,9 @@ public class ShootingStarsPlugin extends Plugin
 	@Setter
 	private boolean getError = false;
 
+	private ShootingStarsPanel shootingStarsPanel;
+	private NavigationButton navButton;
+
 	@Provides
 	ShootingStarsConfig getConfig(ConfigManager configManager)
 	{
@@ -108,10 +116,13 @@ public class ShootingStarsPlugin extends Plugin
 	{
 		lastLoc = null;
 		lastWorld = -1;
-		overlayManager.add(overlayPanel);
 		shootingStarPostEndpoint = config.shootingStarPostEndpointConfig();
 		shootingStarGetEndpoint = config.shootingStarGetEndpointConfig();
 		shootingStarsSharedKey = config.shootingStarSharedKeyConfig();
+		shootingStarsPanel = new ShootingStarsPanel(this);
+		final BufferedImage icon = ImageUtil.getResourceStreamFromClass(getClass(), "/shooting_stars_icon.png");
+		navButton = NavigationButton.builder().tooltip("Shooting Stars").icon(icon).priority(7).panel(shootingStarsPanel).build();
+		clientToolbar.addNavigation(navButton);
 	}
 
 	@Override
@@ -119,7 +130,13 @@ public class ShootingStarsPlugin extends Plugin
 	{
 		lastLoc = null;
 		lastWorld = -1;
-		overlayManager.remove(overlayPanel);
+		clientToolbar.removeNavigation(navButton);
+	}
+
+	public void setStarData(ArrayList<ShootingStarsData> starData)
+	{
+		this.starData = starData;
+		SwingUtilities.invokeLater(() -> shootingStarsPanel.refresh());
 	}
 
 	@Subscribe

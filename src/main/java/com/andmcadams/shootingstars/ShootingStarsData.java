@@ -24,6 +24,8 @@
  */
 package com.andmcadams.shootingstars;
 
+import java.time.Duration;
+import java.time.Instant;
 import lombok.Data;
 import lombok.Getter;
 
@@ -55,4 +57,32 @@ public class ShootingStarsData
 		return ShootingStarsLocation.getLocation(this.loc);
 	}
 
+	public boolean hasLanded()
+	{
+		return Instant.now().isAfter(Instant.ofEpochMilli(this.minTime * 1000));
+	}
+
+	private String prettyPrintTime(Duration d)
+	{
+		long hours = d.toHours();
+		StringBuilder timeStringBuilder = new StringBuilder();
+		if (hours == 1)
+			timeStringBuilder.append(hours).append(" hour ");
+		else if(hours == 2)
+			timeStringBuilder.append(hours).append(" hours ");
+		long minutes = d.toMinutes() % 60;
+		if (hours == 0 && minutes == 0)
+			timeStringBuilder.append("Now");
+		else
+			timeStringBuilder.append(String.format("%d minutes", minutes));
+
+		return timeStringBuilder.toString();
+	}
+
+	public String getLandingTime()
+	{
+		String minTimeString = prettyPrintTime(Duration.between(Instant.now(), Instant.ofEpochMilli(this.minTime * 1000)));
+		String maxTimeString = prettyPrintTime(Duration.between(Instant.now(), Instant.ofEpochMilli(this.maxTime * 1000)));
+		return minTimeString + " - " + maxTimeString;
+	}
 }
