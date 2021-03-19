@@ -7,3 +7,7 @@ The following information is sent to the server when you have looked through a t
 * Keyword used to store your data
 
 The default server does not encrypt any of your data, and only stores the above data.
+
+## Shared keys
+The key set in the plugin config must be 1-10 alphanumeric characters (a-z, A-Z, 0-9). You can share this key with others so you can see each
+other's scouted stars. If you have not previously set a key, one will be automatically generated  and set for you.
