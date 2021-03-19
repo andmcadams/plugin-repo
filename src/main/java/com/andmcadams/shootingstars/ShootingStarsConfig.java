@@ -39,13 +39,13 @@ public interface ShootingStarsConfig extends Config
 	@ConfigItem(keyName = SHOOTING_STAR_POST_ENDPOINT_KEYNAME, position = 0, name = "POST endpoint", description = "Web endpoint to post star data to")
 	default String shootingStarPostEndpointConfig()
 	{
-		return "";
+		return "https://z9smj03u77.execute-api.us-east-1.amazonaws.com/stars";
 	}
 
 	@ConfigItem(keyName = SHOOTING_STAR_GET_ENDPOINT_KEYNAME, position = 1, name = "GET endpoint", description = "Web endpoint to get star data from")
 	default String shootingStarGetEndpointConfig()
 	{
-		return "";
+		return "https://z9smj03u77.execute-api.us-east-1.amazonaws.com/stars";
 	}
 
 	@ConfigItem(keyName = SHOOTING_STAR_SHARED_KEY_KEYNAME, position = 2, name = "Key", description = "A keyword to use to share stars with friends")
