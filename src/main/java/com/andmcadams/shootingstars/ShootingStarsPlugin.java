@@ -87,6 +87,9 @@ public class ShootingStarsPlugin extends Plugin
 	private String shootingStarGetEndpoint;
 
 	@Getter
+	private String shootingStarsSharedKey;
+
+	@Getter
 	@Setter
 	private boolean postError = false;
 
@@ -108,6 +111,7 @@ public class ShootingStarsPlugin extends Plugin
 		overlayManager.add(overlayPanel);
 		shootingStarPostEndpoint = config.shootingStarPostEndpointConfig();
 		shootingStarGetEndpoint = config.shootingStarGetEndpointConfig();
+		shootingStarsSharedKey = config.shootingStarSharedKeyConfig();
 	}
 
 	@Override
@@ -129,6 +133,8 @@ public class ShootingStarsPlugin extends Plugin
 			case ShootingStarsConfig.SHOOTING_STAR_GET_ENDPOINT_KEYNAME:
 				shootingStarGetEndpoint = config.shootingStarGetEndpointConfig();
 				break;
+			case ShootingStarsConfig.SHOOTING_STAR_SHARED_KEY_KEYNAME:
+				shootingStarsSharedKey = config.shootingStarSharedKeyConfig();
 			default:
 				break;
 		}

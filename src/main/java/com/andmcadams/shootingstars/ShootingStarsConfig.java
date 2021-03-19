@@ -27,22 +27,30 @@ package com.andmcadams.shootingstars;
 import net.runelite.client.config.Config;
 import net.runelite.client.config.ConfigGroup;
 import net.runelite.client.config.ConfigItem;
+import org.apache.commons.lang3.RandomStringUtils;
 
 @ConfigGroup(ShootingStarsPlugin.CONFIG_GROUP_KEY)
 public interface ShootingStarsConfig extends Config
 {
 	String SHOOTING_STAR_POST_ENDPOINT_KEYNAME = "post endpoint";
 	String SHOOTING_STAR_GET_ENDPOINT_KEYNAME = "get endpoint";
+	String SHOOTING_STAR_SHARED_KEY_KEYNAME = "password";
 
-	@ConfigItem(keyName = SHOOTING_STAR_POST_ENDPOINT_KEYNAME, name = "POST endpoint", description = "Web endpoint to post star data to")
+	@ConfigItem(keyName = SHOOTING_STAR_POST_ENDPOINT_KEYNAME, position = 0, name = "POST endpoint", description = "Web endpoint to post star data to")
 	default String shootingStarPostEndpointConfig()
 	{
 		return "";
 	}
 
-	@ConfigItem(keyName = SHOOTING_STAR_GET_ENDPOINT_KEYNAME, name = "GET endpoint", description = "Web endpoint to get star data from")
+	@ConfigItem(keyName = SHOOTING_STAR_GET_ENDPOINT_KEYNAME, position = 1, name = "GET endpoint", description = "Web endpoint to get star data from")
 	default String shootingStarGetEndpointConfig()
 	{
 		return "";
+	}
+
+	@ConfigItem(keyName = SHOOTING_STAR_SHARED_KEY_KEYNAME, position = 2, name = "Key", description = "A keyword to use to share stars with friends")
+	default String shootingStarSharedKeyConfig()
+	{
+		return RandomStringUtils.random(10, true, true);
 	}
 }

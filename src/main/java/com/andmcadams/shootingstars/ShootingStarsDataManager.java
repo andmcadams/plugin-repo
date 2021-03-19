@@ -30,6 +30,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonSyntaxException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -81,29 +82,34 @@ public class ShootingStarsDataManager
 			temp = data;
 			data = new ArrayList<>();
 		}
-
-		Request r = new Request.Builder()
-			.url(plugin.getShootingStarPostEndpoint())
-			.post(RequestBody.create(JSON, gson.toJson(temp)))
-			.build();
-
-		okHttpClient.newCall(r).enqueue(new Callback()
+		try
 		{
-			@Override
-			public void onFailure(Call call, IOException e)
-			{
-				log.debug("Error sending shooting star data", e);
-				plugin.setPostError(true);
-			}
+			Request r = new Request.Builder()
+				.url(plugin.getShootingStarPostEndpoint())
+				.addHeader("Authorization", plugin.getShootingStarsSharedKey())
+				.post(RequestBody.create(JSON, gson.toJson(temp)))
+				.build();
 
-			@Override
-			public void onResponse(Call call, Response response)
+			okHttpClient.newCall(r).enqueue(new Callback()
 			{
-				log.debug("Successfully sent shooting star data");
-				plugin.setPostError(false);
-				response.close();
-			}
-		});
+				@Override
+				public void onFailure(Call call, IOException e)
+				{
+					log.debug("Error sending shooting star data", e);
+					plugin.setPostError(true);
+				}
+
+				@Override
+				public void onResponse(Call call, Response response)
+				{
+					log.debug("Successfully sent shooting star data");
+					plugin.setPostError(false);
+					response.close();
+				}
+			});
+		} catch(IllegalArgumentException e) {
+			log.error("Bad URL given: " + e.getLocalizedMessage());
+		}
 	}
 
 	private List<ShootingStarsData> parseData(JsonArray j)
@@ -121,33 +127,39 @@ public class ShootingStarsDataManager
 
 	protected void hitAPI()
 	{
-		Request r = new Request.Builder()
-			.url(plugin.getShootingStarGetEndpoint())
-			.build();
-		okHttpClient.newCall(r).enqueue(new Callback()
+		try
 		{
-			@Override
-			public void onFailure(Call call, IOException e)
+			Request r = new Request.Builder()
+				.url(plugin.getShootingStarGetEndpoint())
+				.addHeader("Authorization", plugin.getShootingStarsSharedKey())
+				.build();
+			okHttpClient.newCall(r).enqueue(new Callback()
 			{
-				log.debug("Error retrieving shooting star data", e);
-				plugin.setGetError(true);
-			}
+				@Override
+				public void onFailure(Call call, IOException e)
+				{
+					log.debug("Error retrieving shooting star data", e);
+					plugin.setGetError(true);
+				}
 
-			@Override
-			public void onResponse(Call call, Response response)
-			{
-				try
+				@Override
+				public void onResponse(Call call, Response response)
 				{
-					JsonArray j = new Gson().fromJson(response.body().string(), JsonArray.class);
-					plugin.setStarData(parseData(j));
-					log.info(j.toString());
+					try
+					{
+						JsonArray j = new Gson().fromJson(response.body().string(), JsonArray.class);
+						plugin.setStarData(parseData(j));
+						log.info(j.toString());
+					}
+					catch (IOException | JsonSyntaxException e)
+					{
+						log.error(e.getMessage());
+					}
+					plugin.setGetError(false);
 				}
-				catch (IOException e)
-				{
-					log.error(e.getMessage());
-				}
-				plugin.setGetError(false);
-			}
-		});
+			});
+		} catch (IllegalArgumentException e) {
+			log.error("Bad URL given: " + e.getLocalizedMessage());
+		}
 	}
 }
