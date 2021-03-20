@@ -48,9 +48,9 @@ public interface ShootingStarsConfig extends Config
 		return "https://z9smj03u77.execute-api.us-east-1.amazonaws.com/stars";
 	}
 
-	@ConfigItem(keyName = SHOOTING_STAR_SHARED_KEY_KEYNAME, position = 2, name = "Key", description = "A keyword to use to share stars with friends")
+	@ConfigItem(keyName = SHOOTING_STAR_SHARED_KEY_KEYNAME, position = 2, name = "Key", description = "A keyword to use to share stars with friends. Must be 1-10 alpha characters")
 	default String shootingStarSharedKeyConfig()
 	{
-		return RandomStringUtils.random(10, true, true);
+		return "";
 	}
 }

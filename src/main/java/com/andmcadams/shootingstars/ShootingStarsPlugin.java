@@ -223,6 +223,13 @@ public class ShootingStarsPlugin extends Plugin
 		manager.submitToAPI();
 	}
 
+	private Pattern validKeyRegex = Pattern.compile("^[a-zA-Z]{1,10}$");
+	private boolean isValidKey(String sharedKey)
+	{
+		log.info("key is valid: " + validKeyRegex.matcher(sharedKey).find());
+		return validKeyRegex.matcher(sharedKey).find();
+	}
+
 	@Schedule(
 		period = SECONDS_BETWEEN_GET,
 		unit = ChronoUnit.SECONDS,
@@ -230,7 +237,7 @@ public class ShootingStarsPlugin extends Plugin
 	)
 	public void hitAPI()
 	{
-		if (client.getGameState() == GameState.LOGGED_IN)
+		if (client.getGameState() == GameState.LOGGED_IN && isValidKey(shootingStarsSharedKey))
 			manager.hitAPI();
 	}
 
