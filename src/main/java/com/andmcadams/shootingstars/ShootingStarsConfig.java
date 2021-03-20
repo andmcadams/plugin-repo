@@ -27,7 +27,6 @@ package com.andmcadams.shootingstars;
 import net.runelite.client.config.Config;
 import net.runelite.client.config.ConfigGroup;
 import net.runelite.client.config.ConfigItem;
-import org.apache.commons.lang3.RandomStringUtils;
 
 @ConfigGroup(ShootingStarsPlugin.CONFIG_GROUP_KEY)
 public interface ShootingStarsConfig extends Config
