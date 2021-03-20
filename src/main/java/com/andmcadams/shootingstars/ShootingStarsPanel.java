@@ -78,7 +78,7 @@ public class ShootingStarsPanel extends PluginPanel
 		// Create the task list panel
 		starsListPanel.setLayout(new GridBagLayout());
 		starsListPanel.setBackground(ColorScheme.DARK_GRAY_COLOR);
-		c.insets = new Insets(0, 0, 2, 0);
+		c.insets = new Insets(0, 2, 2, 2);
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.weightx = 1;
 		c.gridx = 0;
