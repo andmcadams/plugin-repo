@@ -44,6 +44,8 @@ public class ShootingStarsData
 	@Getter
 	private final long maxTime;
 
+	private static final String NOW_STRING = "Now";
+
 	public ShootingStarsData(ShootingStarsLocation loc, int world, long minTime, long maxTime)
 	{
 		this.loc = loc.getId();
@@ -72,7 +74,7 @@ public class ShootingStarsData
 			timeStringBuilder.append(hours).append(" hours ");
 		long minutes = d.toMinutes() % 60;
 		if (hours == 0 && minutes <= 0)
-			timeStringBuilder.append("Now");
+			timeStringBuilder.append(NOW_STRING);
 		else
 			timeStringBuilder.append(String.format("%d minutes", minutes));
 
@@ -83,6 +85,11 @@ public class ShootingStarsData
 	{
 		String minTimeString = prettyPrintTime(Duration.between(Instant.now(), Instant.ofEpochMilli(this.minTime * 1000)));
 		String maxTimeString = prettyPrintTime(Duration.between(Instant.now(), Instant.ofEpochMilli(this.maxTime * 1000)));
+
+		// If the star has definitely landed, just return "Now"
+		if (NOW_STRING.equals(maxTimeString))
+			return NOW_STRING;
+
 		return minTimeString + " - " + maxTimeString;
 	}
 }
