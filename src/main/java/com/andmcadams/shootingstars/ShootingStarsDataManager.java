@@ -81,6 +81,24 @@ public class ShootingStarsDataManager
 			temp = data;
 			data = new ArrayList<>();
 		}
+		makePostRequest(temp);
+	}
+
+	private ArrayList<ShootingStarsData> parseData(JsonArray j)
+	{
+		ArrayList<ShootingStarsData> l = new ArrayList<>();
+		for (JsonElement jsonElement : j)
+		{
+			JsonObject jObj = jsonElement.getAsJsonObject();
+			ShootingStarsData d = new ShootingStarsData(ShootingStarsLocation.getLocation(jObj.get("location").getAsInt()),
+				jObj.get("world").getAsInt(), jObj.get("minTime").getAsLong(), jObj.get("maxTime").getAsLong());
+			l.add(d);
+		}
+		return l;
+	}
+
+	protected void makePostRequest(List<Object> temp)
+	{
 		try
 		{
 			Request r = new Request.Builder()
@@ -107,29 +125,19 @@ public class ShootingStarsDataManager
 						plugin.setPostError(false);
 						response.close();
 					}
-					else {
+					else
+					{
 						log.error("Post request unsuccessful");
 						plugin.setPostError(true);
 					}
 				}
 			});
-		} catch(IllegalArgumentException e) {
+		}
+		catch (IllegalArgumentException e)
+		{
 			log.error("Bad URL given: " + e.getLocalizedMessage());
 			plugin.setPostError(true);
 		}
-	}
-
-	private ArrayList<ShootingStarsData> parseData(JsonArray j)
-	{
-		ArrayList<ShootingStarsData> l = new ArrayList<>();
-		for (JsonElement jsonElement : j)
-		{
-			JsonObject jObj = jsonElement.getAsJsonObject();
-			ShootingStarsData d = new ShootingStarsData(ShootingStarsLocation.getLocation(jObj.get("location").getAsInt()),
-				jObj.get("world").getAsInt(), jObj.get("minTime").getAsLong(), jObj.get("maxTime").getAsLong());
-			l.add(d);
-		}
-		return l;
 	}
 
 	protected void makeGetRequest()
@@ -167,13 +175,16 @@ public class ShootingStarsDataManager
 							log.error(e.getMessage());
 						}
 					}
-					else {
+					else
+					{
 						log.error("Get request unsuccessful");
 						plugin.setGetError(true);
 					}
 				}
 			});
-		} catch (IllegalArgumentException e) {
+		}
+		catch (IllegalArgumentException e)
+		{
 			log.error("Bad URL given: " + e.getLocalizedMessage());
 		}
 	}

@@ -170,9 +170,11 @@ public class ShootingStarsPlugin extends Plugin
 		{
 			case ShootingStarsConfig.SHOOTING_STAR_POST_ENDPOINT_KEYNAME:
 				shootingStarPostEndpoint = config.shootingStarPostEndpointConfig();
+				manager.makePostRequest(new ArrayList<Object>());
 				break;
 			case ShootingStarsConfig.SHOOTING_STAR_GET_ENDPOINT_KEYNAME:
 				shootingStarGetEndpoint = config.shootingStarGetEndpointConfig();
+				manager.makeGetRequest();
 				break;
 			case ShootingStarsConfig.SHOOTING_STAR_SHARED_KEY_KEYNAME:
 				shootingStarsSharedKey = config.shootingStarSharedKeyConfig();
