@@ -101,13 +101,21 @@ public class ShootingStarsDataManager
 				@Override
 				public void onResponse(Call call, Response response)
 				{
-					log.debug("Successfully sent shooting star data");
-					plugin.setPostError(false);
-					response.close();
+					if (response.isSuccessful())
+					{
+						log.debug("Successfully sent shooting star data");
+						plugin.setPostError(false);
+						response.close();
+					}
+					else {
+						log.error("Post request unsuccessful");
+						plugin.setPostError(true);
+					}
 				}
 			});
 		} catch(IllegalArgumentException e) {
 			log.error("Bad URL given: " + e.getLocalizedMessage());
+			plugin.setPostError(true);
 		}
 	}
 
@@ -124,7 +132,7 @@ public class ShootingStarsDataManager
 		return l;
 	}
 
-	protected void hitAPI()
+	protected void makeGetRequest()
 	{
 		try
 		{
@@ -144,17 +152,25 @@ public class ShootingStarsDataManager
 				@Override
 				public void onResponse(Call call, Response response)
 				{
-					try
+					if (response.isSuccessful())
 					{
-						JsonArray j = new Gson().fromJson(response.body().string(), JsonArray.class);
-						plugin.setStarData(parseData(j));
-						log.info(j.toString());
+						try
+						{
+							JsonArray j = new Gson().fromJson(response.body().string(), JsonArray.class);
+							plugin.setStarData(parseData(j));
+							log.info(j.toString());
+							plugin.setGetError(false);
+						}
+						catch (IOException | JsonSyntaxException e)
+						{
+							plugin.setGetError(true);
+							log.error(e.getMessage());
+						}
 					}
-					catch (IOException | JsonSyntaxException e)
-					{
-						log.error(e.getMessage());
+					else {
+						log.error("Get request unsuccessful");
+						plugin.setGetError(true);
 					}
-					plugin.setGetError(false);
 				}
 			});
 		} catch (IllegalArgumentException e) {

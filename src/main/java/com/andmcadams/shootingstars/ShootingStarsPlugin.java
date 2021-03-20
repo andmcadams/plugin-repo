@@ -49,6 +49,7 @@ import net.runelite.client.plugins.PluginDescriptor;
 import net.runelite.client.task.Schedule;
 import net.runelite.client.ui.ClientToolbar;
 import net.runelite.client.ui.NavigationButton;
+import net.runelite.client.ui.overlay.OverlayManager;
 import net.runelite.client.util.ImageUtil;
 
 @Slf4j
@@ -67,6 +68,12 @@ public class ShootingStarsPlugin extends Plugin
 
 	@Inject
 	private ShootingStarsConfig config;
+
+	@Inject
+	private ShootingStarsOverlayPanel overlayPanel;
+
+	@Inject
+	private OverlayManager overlayManager;
 
 	@Inject
 	private ClientToolbar clientToolbar;
@@ -102,6 +109,9 @@ public class ShootingStarsPlugin extends Plugin
 	@Setter
 	private boolean getError = false;
 
+	@Getter
+	private boolean keyError = false;
+
 	private ShootingStarsPanel shootingStarsPanel;
 	private NavigationButton navButton;
 
@@ -116,9 +126,17 @@ public class ShootingStarsPlugin extends Plugin
 	{
 		lastLoc = null;
 		lastWorld = -1;
+
+		// Set up config variables
 		shootingStarPostEndpoint = config.shootingStarPostEndpointConfig();
 		shootingStarGetEndpoint = config.shootingStarGetEndpointConfig();
 		shootingStarsSharedKey = config.shootingStarSharedKeyConfig();
+		keyError = isInvalidKey(shootingStarsSharedKey);
+
+		// Add the overlay to the OverlayManager
+		overlayManager.add(overlayPanel);
+
+		// Set up the sidebar panel
 		shootingStarsPanel = new ShootingStarsPanel(this);
 		final BufferedImage icon = ImageUtil.getResourceStreamFromClass(getClass(), "/shooting_stars_icon.png");
 		navButton = NavigationButton.builder().tooltip("Shooting Stars").icon(icon).priority(7).panel(shootingStarsPanel).build();
@@ -128,8 +146,14 @@ public class ShootingStarsPlugin extends Plugin
 	@Override
 	protected void shutDown() throws Exception
 	{
+		// Reset non-config vars
 		lastLoc = null;
 		lastWorld = -1;
+
+		// Remove the overlay from the OverlayManager
+		overlayManager.remove(overlayPanel);
+
+		// Remove sidebar panel button
 		clientToolbar.removeNavigation(navButton);
 	}
 
@@ -152,15 +176,15 @@ public class ShootingStarsPlugin extends Plugin
 				break;
 			case ShootingStarsConfig.SHOOTING_STAR_SHARED_KEY_KEYNAME:
 				shootingStarsSharedKey = config.shootingStarSharedKeyConfig();
+				keyError = isInvalidKey(shootingStarsSharedKey);
 			default:
 				break;
 		}
 	}
 
-	private Pattern firstMinThenHour = Pattern.compile(".* next (\\d+) minutes to (\\d+) hours? (\\d+) .*");
-	private Pattern hourRegex = Pattern.compile(".* next (\\d+) hours? (\\d+) minutes? to (\\d+) hours? (\\d+) .*");
-	private Pattern minutes = Pattern.compile(".* (\\d+) to (\\d+) .*");
-
+	private final Pattern firstMinThenHour = Pattern.compile(".* next (\\d+) minutes to (\\d+) hours? (\\d+) .*");
+	private final Pattern hourRegex = Pattern.compile(".* next (\\d+) hours? (\\d+) minutes? to (\\d+) hours? (\\d+) .*");
+	private final Pattern minutes = Pattern.compile(".* (\\d+) to (\\d+) .*");
 
 	private void recordEvent(ShootingStarsLocation loc, int world, int minTime, int maxTime)
 	{
@@ -223,11 +247,11 @@ public class ShootingStarsPlugin extends Plugin
 		manager.submitToAPI();
 	}
 
-	private Pattern validKeyRegex = Pattern.compile("^[a-zA-Z]{1,10}$");
-	private boolean isValidKey(String sharedKey)
+	private final Pattern validKeyRegex = Pattern.compile("^[a-zA-Z]{1,10}$");
+	private boolean isInvalidKey(String sharedKey)
 	{
 		log.info("key is valid: " + validKeyRegex.matcher(sharedKey).find());
-		return validKeyRegex.matcher(sharedKey).find();
+		return !validKeyRegex.matcher(sharedKey).find();
 	}
 
 	@Schedule(
@@ -237,8 +261,8 @@ public class ShootingStarsPlugin extends Plugin
 	)
 	public void hitAPI()
 	{
-		if (client.getGameState() == GameState.LOGGED_IN && isValidKey(shootingStarsSharedKey))
-			manager.hitAPI();
+		if (client.getGameState() == GameState.LOGGED_IN && !keyError)
+			manager.makeGetRequest();
 	}
 
 }
