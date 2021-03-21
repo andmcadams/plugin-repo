@@ -270,7 +270,7 @@ public class ShootingStarsPlugin extends Plugin
 	)
 	public void hitAPI()
 	{
-		if (client.getGameState() == GameState.LOGGED_IN && !keyError)
+		if ((client.getGameState() == GameState.LOGGED_IN || client.getGameState() == GameState.HOPPING) && !keyError)
 			manager.makeGetRequest();
 	}
 
