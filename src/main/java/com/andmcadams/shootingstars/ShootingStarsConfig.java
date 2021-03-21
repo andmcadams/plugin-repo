@@ -50,6 +50,6 @@ public interface ShootingStarsConfig extends Config
 	@ConfigItem(keyName = SHOOTING_STAR_SHARED_KEY_KEYNAME, position = 2, name = "Key", description = "A keyword to use to share stars with friends. Must be 1-10 alpha characters")
 	default String shootingStarSharedKeyConfig()
 	{
-		return "";
+		return "global";
 	}
 }
