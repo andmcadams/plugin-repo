@@ -61,7 +61,8 @@ public class ShootingStarsData
 
 	public boolean hasLanded()
 	{
-		return Instant.now().isAfter(Instant.ofEpochMilli(this.minTime * 1000));
+		Duration timeUntil = Duration.between(Instant.now(), Instant.ofEpochMilli(this.minTime * 1000));
+		return NOW_STRING.equals(prettyPrintTime(timeUntil));
 	}
 
 	private String prettyPrintTime(Duration d)
@@ -70,13 +71,18 @@ public class ShootingStarsData
 		StringBuilder timeStringBuilder = new StringBuilder();
 		if (hours == 1)
 			timeStringBuilder.append(hours).append(" hour ");
-		else if(hours == 2)
+		else if (hours >= 2)
 			timeStringBuilder.append(hours).append(" hours ");
 		long minutes = d.toMinutes() % 60;
 		if (hours == 0 && minutes <= 0)
 			timeStringBuilder.append(NOW_STRING);
 		else
-			timeStringBuilder.append(String.format("%d minutes", minutes));
+		{
+			if (minutes == 1)
+				timeStringBuilder.append(String.format("%d minute", minutes));
+			else
+				timeStringBuilder.append(String.format("%d minutes", minutes));
+		}
 
 		return timeStringBuilder.toString();
 	}

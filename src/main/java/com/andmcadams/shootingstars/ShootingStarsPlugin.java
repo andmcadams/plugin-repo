@@ -81,6 +81,7 @@ public class ShootingStarsPlugin extends Plugin
 	@Inject
 	private ClientThread clientThread;
 
+	private final int SECONDS_BETWEEN_REFRESH = 10;
 	private final int SECONDS_BETWEEN_UPLOADS = 10;
 	private final int SECONDS_BETWEEN_GET = 30;
 
@@ -90,9 +91,6 @@ public class ShootingStarsPlugin extends Plugin
 	static final String CONFIG_GROUP_KEY = "shootingstar";
 
 	@Getter
-	private ArrayList<ShootingStarsData> starData = null;
-
-	@Getter
 	private String shootingStarPostEndpoint;
 
 	@Getter
@@ -100,6 +98,10 @@ public class ShootingStarsPlugin extends Plugin
 
 	@Getter
 	private String shootingStarsSharedKey;
+
+	@Getter
+	@Setter
+	private ArrayList<ShootingStarsData> starData = new ArrayList<>();
 
 	@Getter
 	@Setter
@@ -157,12 +159,6 @@ public class ShootingStarsPlugin extends Plugin
 		clientToolbar.removeNavigation(navButton);
 	}
 
-	public void setStarData(ArrayList<ShootingStarsData> starData)
-	{
-		this.starData = starData;
-		SwingUtilities.invokeLater(() -> shootingStarsPanel.refresh());
-	}
-
 	@Subscribe
 	public void onConfigChanged(ConfigChanged event)
 	{
@@ -187,12 +183,13 @@ public class ShootingStarsPlugin extends Plugin
 	private final Pattern firstMinThenHour = Pattern.compile(".* next (\\d+) minutes to (\\d+) hours? (\\d+) .*");
 	private final Pattern hourRegex = Pattern.compile(".* next (\\d+) hours? (\\d+) minutes? to (\\d+) hours? (\\d+) .*");
 	private final Pattern minutes = Pattern.compile(".* (\\d+) to (\\d+) .*");
+	private static final int MAX_TIME_ADJ = 59;
 
 	private void recordEvent(ShootingStarsLocation loc, int world, int minTime, int maxTime)
 	{
 		long currentTime = Instant.now().toEpochMilli();
 		long lminTime = currentTime / 1000 + (minTime * 60);
-		long lmaxTime = currentTime / 1000 + (maxTime * 60);
+		long lmaxTime = currentTime / 1000 + (maxTime * 60) + MAX_TIME_ADJ;
 		manager.storeEvent(new ShootingStarsData(loc, world, lminTime, lmaxTime));
 		lastWorld = world;
 		lastLoc = loc;
@@ -237,6 +234,16 @@ public class ShootingStarsPlugin extends Plugin
 				}
 			}
 		}
+	}
+
+	@Schedule(
+		period = SECONDS_BETWEEN_REFRESH,
+		unit = ChronoUnit.SECONDS,
+		asynchronous = true
+	)
+	public void updatePanels()
+	{
+		SwingUtilities.invokeLater(() -> shootingStarsPanel.refresh());
 	}
 
 	@Schedule(
