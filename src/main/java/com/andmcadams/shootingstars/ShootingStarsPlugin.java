@@ -321,5 +321,4 @@ public class ShootingStarsPlugin extends Plugin
 			}
 		}
 	}
-
 }

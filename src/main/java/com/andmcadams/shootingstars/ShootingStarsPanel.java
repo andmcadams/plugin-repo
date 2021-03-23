@@ -111,16 +111,20 @@ public class ShootingStarsPanel extends PluginPanel
 
 	private boolean isAllowedWorld(ShootingStarsData starData)
 	{
+		// Disallow old stars from being displayed
 		Duration timeSinceLanded = Duration.between(Instant.ofEpochMilli(starData.getMaxTime() * 1000), Instant.now());
 		if (timeSinceLanded.toMinutes() <= plugin.getConfig().shootingStarExpirationLength())
 		{
 			return false;
 		}
 
+		// Disallow PVP worlds from being displayed (depending on config)
 		WorldResult worldResult = plugin.getWorldService().getWorlds();
 		World world = worldResult.findWorld(starData.getWorld());
 		if (world.getTypes().contains(WorldType.PVP) && !plugin.getConfig().shootingStarShowPvpWorlds())
 			return false;
+
+		// Disallow various landing sites (depending on config)
 	    switch(starData.getLocation())
 		{
 			case ASGARNIA:
@@ -200,6 +204,7 @@ public class ShootingStarsPanel extends PluginPanel
 
 	public void onActivate()
 	{
+		// If the panel is opened, try to run a get request to populate/refresh the panel.
 		log.info("Activated");
 		open = true;
 		plugin.hitAPI();
