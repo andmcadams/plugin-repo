@@ -110,7 +110,6 @@ public class ShootingStarsPanel extends PluginPanel
 	private boolean isAllowedWorld(ShootingStarsData starData)
 	{
 		WorldResult worldResult = plugin.getWorldService().getWorlds();
-		// Don't try to hop if the world doesn't exist
 		World world = worldResult.findWorld(starData.getWorld());
 		if (world.getTypes().contains(WorldType.PVP) && !plugin.getConfig().shootingStarShowPvpWorlds())
 			return false;
