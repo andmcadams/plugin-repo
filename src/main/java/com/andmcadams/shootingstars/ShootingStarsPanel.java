@@ -29,6 +29,8 @@ import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.ArrayList;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -109,6 +111,12 @@ public class ShootingStarsPanel extends PluginPanel
 
 	private boolean isAllowedWorld(ShootingStarsData starData)
 	{
+		Duration timeSinceLanded = Duration.between(Instant.ofEpochMilli(starData.getMaxTime() * 1000), Instant.now());
+		if (timeSinceLanded.toMinutes() <= plugin.getConfig().shootingStarExpirationLength())
+		{
+			return false;
+		}
+
 		WorldResult worldResult = plugin.getWorldService().getWorlds();
 		World world = worldResult.findWorld(starData.getWorld());
 		if (world.getTypes().contains(WorldType.PVP) && !plugin.getConfig().shootingStarShowPvpWorlds())

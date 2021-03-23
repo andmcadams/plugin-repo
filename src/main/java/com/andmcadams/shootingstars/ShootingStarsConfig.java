@@ -78,11 +78,11 @@ public interface ShootingStarsConfig extends Config
 		description = "How many minutes landed stars should remain listed in the side panel"
 	)
 	@Range(
-		max = 10
+		max = 5
 	)
 	default int shootingStarExpirationLength()
 	{
-		return 0;
+		return 2;
 	}
 
 	@ConfigSection(
