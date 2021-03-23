@@ -22,8 +22,11 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.andmcadams.shootingstars;
+package com.andmcadams.shootingstars.ui.condensed;
 
+import com.andmcadams.shootingstars.ShootingStarsData;
+import com.andmcadams.shootingstars.ShootingStarsLocation;
+import com.andmcadams.shootingstars.ShootingStarsPlugin;
 import com.google.common.collect.Ordering;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -221,7 +224,7 @@ public class ShootingStarsPanel extends PluginPanel
 		updateList();
 	}
 
-	void updateList()
+	public void updateList()
 	{
 		rows.sort((r1, r2) ->
 		{
@@ -274,7 +277,7 @@ public class ShootingStarsPanel extends PluginPanel
 		return ordering.compare(compareByFn.apply(row1), compareByFn.apply(row2));
 	}
 
-	void populate(List<ShootingStarsData> stars)
+	public void populate(List<ShootingStarsData> stars)
 	{
 		rows.clear();
 

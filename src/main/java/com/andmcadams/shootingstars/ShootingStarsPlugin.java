@@ -24,6 +24,8 @@
  */
 package com.andmcadams.shootingstars;
 
+// Change this import between .panels and .condensed
+import com.andmcadams.shootingstars.ui.condensed.ShootingStarsPanel;
 import com.google.inject.Provides;
 import java.awt.image.BufferedImage;
 import java.time.Instant;
@@ -268,6 +270,7 @@ public class ShootingStarsPlugin extends Plugin
 	public void updatePanelList()
 	{
 		log.debug("Update panel list");
+		// equivalent -> reloadListPanel()
 		SwingUtilities.invokeLater(() -> shootingStarsPanel.populate(starData));
 	}
 
@@ -281,6 +284,7 @@ public class ShootingStarsPlugin extends Plugin
 		log.debug("Update panels");
 		if (shootingStarsPanel.isOpen())
 		{
+			// equivalent -> refreshPanels()
 			SwingUtilities.invokeLater(() -> shootingStarsPanel.updateList());
 		}
 	}
@@ -340,7 +344,7 @@ public class ShootingStarsPlugin extends Plugin
 	/*
 		Stealing from quick hopper plugin from here on, close your eyes...
 	*/
-	int getCurrentWorld()
+	public int getCurrentWorld()
 	{
 		return client.getWorld();
 	}
@@ -349,7 +353,7 @@ public class ShootingStarsPlugin extends Plugin
 	private net.runelite.api.World quickHopTargetWorld;
 	private int displaySwitcherAttempts = 0;
 
-	void hopTo(World world)
+	public void hopTo(World world)
 	{
 		clientThread.invoke(() -> hop(world.getId()));
 	}
