@@ -168,6 +168,7 @@ public class ShootingStarsDataManager
 							plugin.setStarData(parseData(j));
 							log.info(j.toString());
 							plugin.setGetError(false);
+							plugin.updatePanelList();
 						}
 						catch (IOException | JsonSyntaxException e)
 						{

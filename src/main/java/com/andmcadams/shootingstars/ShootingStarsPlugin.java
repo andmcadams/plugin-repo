@@ -83,7 +83,6 @@ public class ShootingStarsPlugin extends Plugin
 	@Inject
 	private ClientThread clientThread;
 
-	private final int SECONDS_BETWEEN_PANEL_LIST_REFRESH = 10;
 	private final int SECONDS_BETWEEN_UPLOADS = 10;
 	private final int SECONDS_BETWEEN_GET = 5;
 	private final int SECONDS_BETWEEN_PANEL_REFRESH = 5;
@@ -241,18 +240,10 @@ public class ShootingStarsPlugin extends Plugin
 		}
 	}
 
-	@Schedule(
-		period = SECONDS_BETWEEN_PANEL_LIST_REFRESH,
-		unit = ChronoUnit.SECONDS,
-		asynchronous = true
-	)
 	public void updatePanelList()
 	{
 		log.info("Update panel list");
-		if (shootingStarsPanel.isOpen())
-		{
-			SwingUtilities.invokeLater(() -> shootingStarsPanel.reloadListPanel());
-		}
+		SwingUtilities.invokeLater(() -> shootingStarsPanel.reloadListPanel());
 	}
 
 	@Schedule(
