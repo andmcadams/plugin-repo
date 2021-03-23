@@ -104,38 +104,38 @@ public class ShootingStarsPanel extends PluginPanel
 		starsList.add(starsSinglePanel);
 	}
 
-	private boolean allowed_world(ShootingStarsData starData)
+	private boolean isAllowedWorld(ShootingStarsData starData)
 	{
 	    switch(starData.getLocation())
 		{
 			case ASGARNIA:
-				return plugin.config.shootingStarShowAsgarniaWorlds();
+				return plugin.getConfig().shootingStarShowAsgarniaWorlds();
 			case KARAMJA:
-				return plugin.config.shootingStarShowKaramjaWorlds();
+				return plugin.getConfig().shootingStarShowKaramjaWorlds();
 			case FELDIP_HILLS:
-				return plugin.config.shootingStarShowFeldipWorlds();
+				return plugin.getConfig().shootingStarShowFeldipWorlds();
 			case FOSSIL_ISLAND:
-				return plugin.config.shootingStarShowFossilIslandWorlds();
+				return plugin.getConfig().shootingStarShowFossilIslandWorlds();
 			case FREMENNIK:
-				return plugin.config.shootingStarShowFremennikWorlds();
+				return plugin.getConfig().shootingStarShowFremennikWorlds();
 			case KOUREND:
-				return plugin.config.shootingStarShowKourendWorlds();
+				return plugin.getConfig().shootingStarShowKourendWorlds();
 			case KANDARIN:
-				return plugin.config.shootingStarShowKandarinWorlds();
+				return plugin.getConfig().shootingStarShowKandarinWorlds();
 			case KEBOS:
-				return plugin.config.shootingStarShowKebosWorlds();
+				return plugin.getConfig().shootingStarShowKebosWorlds();
 			case KHARIDIAN_DESERT:
-				return plugin.config.shootingStarShowDesertWorlds();
+				return plugin.getConfig().shootingStarShowDesertWorlds();
 			case MISTHALIN:
-				return plugin.config.shootingStarShowMisthalinWorlds();
+				return plugin.getConfig().shootingStarShowMisthalinWorlds();
 			case MORYTANIA:
-				return plugin.config.shootingStarShowMorytaniaWorlds();
+				return plugin.getConfig().shootingStarShowMorytaniaWorlds();
 			case PISCATORIS:
-				return plugin.config.shootingStarShowPiscatorisWorlds();
+				return plugin.getConfig().shootingStarShowPiscatorisWorlds();
 			case TIRANNWN:
-				return plugin.config.shootingStarShowTirannwnWorlds();
+				return plugin.getConfig().shootingStarShowTirannwnWorlds();
 			case WILDERNESS:
-				return plugin.config.shootingStarShowWildernessWorlds();
+				return plugin.getConfig().shootingStarShowWildernessWorlds();
 		}
 	    return true;
 	}
@@ -144,25 +144,32 @@ public class ShootingStarsPanel extends PluginPanel
 	{
 		c.gridy = 0;
 		c.weighty = 0;
+		// Remove all old panels
 		for (ShootingStarsSinglePanel starsSinglePanel : starsList)
 		{
 			starsListPanel.remove(starsSinglePanel);
 		}
 		starsList.clear();
+
+		// Add new panels. Need to keep track of the last one to give it extra weighty (to put all extra space after it)
 		ArrayList<ShootingStarsData> starsData = plugin.getStarData();
+		ShootingStarsData lastData = null;
 		for (int i = 0; i < starsData.size(); i++)
 		{
 			ShootingStarsData starData = starsData.get(i);
-			// Skip certain worlds
-			if (!allowed_world(starData))
+			// Skip certain worlds based on config
+			if (!isAllowedWorld(starData))
                 continue;
-			if (i == starsData.size() - 1)
-			{
-				c.weighty = 1;
-				log.info("weight set to 1");
-			}
-			addStar(starsListPanel, starData);
+
+			if (lastData != null)
+				addStar(starsListPanel, lastData);
+			lastData = starData;
 		}
+
+		// Add the last panel with weighty 1
+		c.weighty = 1;
+		if (lastData != null)
+			addStar(starsListPanel, lastData);
 
 		repaint();
 		revalidate();
@@ -172,11 +179,8 @@ public class ShootingStarsPanel extends PluginPanel
 	{
 		for (ShootingStarsSinglePanel starsSinglePanel : starsList)
 		{
-			starsSinglePanel.updateTime();
-			starsSinglePanel.updateLanded();
+			starsSinglePanel.updateLabels();
 		}
-		repaint();
-		revalidate();
 	}
 
 	public void onActivate()

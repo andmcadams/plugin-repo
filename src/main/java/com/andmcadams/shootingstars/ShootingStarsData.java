@@ -69,26 +69,20 @@ public class ShootingStarsData
 	{
 		long hours = d.toHours();
 		StringBuilder timeStringBuilder = new StringBuilder();
-		if (hours == 1)
-			timeStringBuilder.append(hours).append(" hour ");
-		else if (hours >= 2)
-			timeStringBuilder.append(hours).append(" hours ");
+		if (hours != 0)
+			timeStringBuilder.append(hours).append(" hr ");
+
 		long minutes = d.toMinutes() % 60;
 		if (hours == 0 && minutes <= 0)
 		{
 			long seconds = d.getSeconds() % 60;
 			if (seconds > 0)
-				timeStringBuilder.append(String.format("%d seconds", seconds));
+				timeStringBuilder.append(String.format("%d sec", seconds));
 			else
 				timeStringBuilder.append(NOW_STRING);
 		}
 		else
-		{
-			if (minutes == 1)
-				timeStringBuilder.append(String.format("%d minute", minutes));
-			else
-				timeStringBuilder.append(String.format("%d minutes", minutes));
-		}
+			timeStringBuilder.append(String.format("%d min", minutes));
 
 		return timeStringBuilder.toString();
 	}

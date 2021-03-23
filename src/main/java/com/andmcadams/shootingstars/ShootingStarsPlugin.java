@@ -69,6 +69,7 @@ public class ShootingStarsPlugin extends Plugin
 	private ShootingStarsDataManager manager;
 
 	@Inject
+	@Getter
 	private ShootingStarsConfig config;
 
 	@Inject
@@ -166,6 +167,8 @@ public class ShootingStarsPlugin extends Plugin
 	@Subscribe
 	public void onConfigChanged(ConfigChanged event)
 	{
+		if (!event.getGroup().equals(CONFIG_GROUP_KEY))
+			return;
 		switch (event.getKey())
 		{
 			case ShootingStarsConfig.SHOOTING_STAR_POST_ENDPOINT_KEYNAME:
@@ -179,7 +182,9 @@ public class ShootingStarsPlugin extends Plugin
 			case ShootingStarsConfig.SHOOTING_STAR_SHARED_KEY_KEYNAME:
 				shootingStarsSharedKey = config.shootingStarSharedKeyConfig();
 				keyError = isInvalidKey(shootingStarsSharedKey);
+				break;
 			default:
+				updatePanelList();
 				break;
 		}
 	}

@@ -41,7 +41,7 @@ public class ShootingStarsSinglePanel extends JPanel
 
 	private JTextArea nameLabel;
 	private JLabel world;
-	private JTextArea time;
+	private JLabel time;
 
 	@Getter
 	private ShootingStarsData starData;
@@ -70,19 +70,14 @@ public class ShootingStarsSinglePanel extends JPanel
 		topPanel.add(world);
 		topPanel.add(nameLabel);
 
-		time = new JTextArea();
-		time.setWrapStyleWord(true);
-		time.setLineWrap(true);
-		time.setEditable(false);
-		time.setOpaque(false);
-		time.setFocusable(false);
-		updateTime();
-		updateLanded();
+		time = new JLabel();
+
+		updateLabels();
 		add(topPanel);
 		add(time);
 	}
 
-	public boolean updateLanded()
+	private boolean updateLanded()
 	{
 		Color c;
 		boolean hasLanded = starData.hasLanded();
@@ -94,8 +89,16 @@ public class ShootingStarsSinglePanel extends JPanel
 		return hasLanded;
 	}
 
-	public void updateTime()
+	private void updateTime()
 	{
 		time.setText(starData.getLandingTime());
+	}
+
+	public void updateLabels()
+	{
+		updateLanded();
+		updateTime();
+		repaint();
+		revalidate();
 	}
 }
