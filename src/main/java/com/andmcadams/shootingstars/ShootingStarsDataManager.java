@@ -166,7 +166,7 @@ public class ShootingStarsDataManager
 						{
 							JsonArray j = new Gson().fromJson(response.body().string(), JsonArray.class);
 							plugin.setStarData(parseData(j));
-							log.info(j.toString());
+							log.debug(j.toString());
 							plugin.setGetError(false);
 							plugin.updatePanelList();
 						}

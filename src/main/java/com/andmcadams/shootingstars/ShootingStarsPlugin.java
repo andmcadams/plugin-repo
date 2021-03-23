@@ -252,7 +252,7 @@ public class ShootingStarsPlugin extends Plugin
 
 	public void updatePanelList()
 	{
-		log.info("Update panel list");
+		log.debug("Update panel list");
 		SwingUtilities.invokeLater(() -> shootingStarsPanel.reloadListPanel());
 	}
 
@@ -263,7 +263,7 @@ public class ShootingStarsPlugin extends Plugin
 	)
 	public void updatePanels()
 	{
-		log.info("Update panels");
+		log.debug("Update panels");
 		if (shootingStarsPanel.isOpen())
 		{
 			SwingUtilities.invokeLater(() -> shootingStarsPanel.refreshPanels());
@@ -287,7 +287,7 @@ public class ShootingStarsPlugin extends Plugin
 	)
 	public void attemptGetRequest()
 	{
-		log.info("Attempt get request");
+		log.debug("Attempt get request");
 		hitAPI();
 	}
 
@@ -295,7 +295,7 @@ public class ShootingStarsPlugin extends Plugin
 
 	private boolean isInvalidKey(String sharedKey)
 	{
-		log.info("key is valid: " + validKeyRegex.matcher(sharedKey).find());
+		log.debug("key is valid: " + validKeyRegex.matcher(sharedKey).find());
 		return !validKeyRegex.matcher(sharedKey).find();
 	}
 
@@ -314,7 +314,7 @@ public class ShootingStarsPlugin extends Plugin
 					@Override
 					public void run()
 					{
-						log.info("Resetting canRefresh");
+						log.debug("Resetting canRefresh");
 						canRefresh = true;
 					}
 				}, 30 * 1000);

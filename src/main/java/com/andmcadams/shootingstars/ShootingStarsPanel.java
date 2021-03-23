@@ -205,14 +205,14 @@ public class ShootingStarsPanel extends PluginPanel
 	public void onActivate()
 	{
 		// If the panel is opened, try to run a get request to populate/refresh the panel.
-		log.info("Activated");
+		log.debug("Activated");
 		open = true;
 		plugin.hitAPI();
 	}
 
 	public void onDeactivate()
 	{
-		log.info("Deactivated");
+		log.debug("Deactivated");
 		open = false;
 	}
 
