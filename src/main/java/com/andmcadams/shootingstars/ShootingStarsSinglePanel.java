@@ -76,7 +76,7 @@ public class ShootingStarsSinglePanel extends JPanel
 		time.setEditable(false);
 		time.setOpaque(false);
 		time.setFocusable(false);
-		time.setText(starData.getLandingTime());
+		updateTime();
 		updateLanded();
 		add(topPanel);
 		add(time);
@@ -92,5 +92,10 @@ public class ShootingStarsSinglePanel extends JPanel
 			c = INCOMING;
 		nameLabel.setForeground(c);
 		return hasLanded;
+	}
+
+	public void updateTime()
+	{
+		time.setText(starData.getLandingTime());
 	}
 }

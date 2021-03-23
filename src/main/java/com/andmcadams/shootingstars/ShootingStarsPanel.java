@@ -104,7 +104,7 @@ public class ShootingStarsPanel extends PluginPanel
 		starsList.add(starsSinglePanel);
 	}
 
-	public void refresh()
+	public void reloadListPanel()
 	{
 		c.gridy = 0;
 		c.weighty = 0;
@@ -114,10 +114,10 @@ public class ShootingStarsPanel extends PluginPanel
 		}
 		starsList.clear();
 		ArrayList<ShootingStarsData> starsData = plugin.getStarData();
-		for(int i = 0; i < starsData.size(); i++)
+		for (int i = 0; i < starsData.size(); i++)
 		{
 			ShootingStarsData starData = starsData.get(i);
-			if (i == starsData.size()-1)
+			if (i == starsData.size() - 1)
 			{
 				c.weighty = 1;
 				log.info("weight set to 1");
@@ -125,6 +125,17 @@ public class ShootingStarsPanel extends PluginPanel
 			addStar(starsListPanel, starData);
 		}
 
+		repaint();
+		revalidate();
+	}
+
+	public void refreshPanels()
+	{
+		for (ShootingStarsSinglePanel starsSinglePanel : starsList)
+		{
+			starsSinglePanel.updateTime();
+			starsSinglePanel.updateLanded();
+		}
 		repaint();
 		revalidate();
 	}
@@ -141,4 +152,5 @@ public class ShootingStarsPanel extends PluginPanel
 		log.info("Deactivated");
 		open = false;
 	}
+
 }

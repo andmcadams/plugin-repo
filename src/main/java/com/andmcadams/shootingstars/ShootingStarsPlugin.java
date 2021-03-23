@@ -83,9 +83,10 @@ public class ShootingStarsPlugin extends Plugin
 	@Inject
 	private ClientThread clientThread;
 
-	private final int SECONDS_BETWEEN_REFRESH = 10;
+	private final int SECONDS_BETWEEN_PANEL_LIST_REFRESH = 10;
 	private final int SECONDS_BETWEEN_UPLOADS = 10;
-	private final int SECONDS_BETWEEN_GET = 30;
+	private final int SECONDS_BETWEEN_GET = 5;
+	private final int SECONDS_BETWEEN_PANEL_REFRESH = 5;
 	private boolean canRefresh;
 
 	private ShootingStarsLocation lastLoc;
@@ -241,14 +242,31 @@ public class ShootingStarsPlugin extends Plugin
 	}
 
 	@Schedule(
-		period = SECONDS_BETWEEN_REFRESH,
+		period = SECONDS_BETWEEN_PANEL_LIST_REFRESH,
+		unit = ChronoUnit.SECONDS,
+		asynchronous = true
+	)
+	public void updatePanelList()
+	{
+		log.info("Update panel list");
+		if (shootingStarsPanel.isOpen())
+		{
+			SwingUtilities.invokeLater(() -> shootingStarsPanel.reloadListPanel());
+		}
+	}
+
+	@Schedule(
+		period = SECONDS_BETWEEN_PANEL_REFRESH,
 		unit = ChronoUnit.SECONDS,
 		asynchronous = true
 	)
 	public void updatePanels()
 	{
+		log.info("Update panels");
 		if (shootingStarsPanel.isOpen())
-			SwingUtilities.invokeLater(() -> shootingStarsPanel.refresh());
+		{
+			SwingUtilities.invokeLater(() -> shootingStarsPanel.refreshPanels());
+		}
 	}
 
 	@Schedule(
@@ -268,9 +286,9 @@ public class ShootingStarsPlugin extends Plugin
 	)
 	public void attemptGetRequest()
 	{
+		log.info("Attempt get request");
 		hitAPI();
 	}
-
 
 	private final Pattern validKeyRegex = Pattern.compile("^[a-zA-Z]{1,10}$");
 
