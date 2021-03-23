@@ -113,7 +113,7 @@ public class ShootingStarsPanel extends PluginPanel
 	{
 		// Disallow old stars from being displayed
 		Duration timeSinceLanded = Duration.between(Instant.ofEpochMilli(starData.getMaxTime() * 1000), Instant.now());
-		if (timeSinceLanded.toMinutes() <= plugin.getConfig().shootingStarExpirationLength())
+		if (timeSinceLanded.toMinutes() >= plugin.getConfig().shootingStarExpirationLength())
 		{
 			return false;
 		}
