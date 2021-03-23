@@ -46,6 +46,7 @@ import net.runelite.client.callback.ClientThread;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.events.ConfigChanged;
+import net.runelite.client.game.WorldService;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
 import net.runelite.client.task.Schedule;
@@ -83,6 +84,10 @@ public class ShootingStarsPlugin extends Plugin
 
 	@Inject
 	private ClientThread clientThread;
+
+	@Inject
+	@Getter
+	private WorldService worldService;
 
 	private final int SECONDS_BETWEEN_UPLOADS = 10;
 	private final int SECONDS_BETWEEN_GET = 5;
@@ -312,7 +317,7 @@ public class ShootingStarsPlugin extends Plugin
 						log.info("Resetting canRefresh");
 						canRefresh = true;
 					}
-				}, 60 * 1000);
+				}, 30 * 1000);
 			}
 		}
 	}

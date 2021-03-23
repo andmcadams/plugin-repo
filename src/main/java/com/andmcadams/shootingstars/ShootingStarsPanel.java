@@ -39,6 +39,9 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.client.ui.ColorScheme;
 import net.runelite.client.ui.PluginPanel;
+import net.runelite.http.api.worlds.World;
+import net.runelite.http.api.worlds.WorldResult;
+import net.runelite.http.api.worlds.WorldType;
 
 @Slf4j
 public class ShootingStarsPanel extends PluginPanel
@@ -106,6 +109,11 @@ public class ShootingStarsPanel extends PluginPanel
 
 	private boolean isAllowedWorld(ShootingStarsData starData)
 	{
+		WorldResult worldResult = plugin.getWorldService().getWorlds();
+		// Don't try to hop if the world doesn't exist
+		World world = worldResult.findWorld(starData.getWorld());
+		if (world.getTypes().contains(WorldType.PVP) && !plugin.getConfig().shootingStarShowPvpWorlds())
+			return false;
 	    switch(starData.getLocation())
 		{
 			case ASGARNIA:
