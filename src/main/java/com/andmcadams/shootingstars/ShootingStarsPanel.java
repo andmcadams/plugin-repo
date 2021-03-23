@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021, Andrew McAdams
+ * Copyright (c) 2021, Andrew McAdams, Cyborger1, Psikoi <https://github.com/Psikoi> (Basis)
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -24,22 +24,25 @@
  */
 package com.andmcadams.shootingstars;
 
+import com.google.common.collect.Ordering;
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
+import java.awt.Dimension;
+import java.awt.GridLayout;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
-import javax.swing.JLabel;
+import java.util.EnumSet;
+import java.util.List;
+import java.util.function.Function;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.ScrollPaneConstants;
-import javax.swing.border.EmptyBorder;
+import javax.swing.SwingUtilities;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.client.ui.ColorScheme;
+import net.runelite.client.ui.DynamicGridLayout;
 import net.runelite.client.ui.PluginPanel;
 import net.runelite.http.api.worlds.World;
 import net.runelite.http.api.worlds.WorldResult;
@@ -48,71 +51,283 @@ import net.runelite.http.api.worlds.WorldType;
 @Slf4j
 public class ShootingStarsPanel extends PluginPanel
 {
+	private static final Color ODD_ROW = new Color(44, 44, 44);
 
-	ShootingStarsPlugin plugin;
-	FixedWidthPanel starsListPanel = new FixedWidthPanel();
-	ArrayList<ShootingStarsSinglePanel> starsList = new ArrayList<>();
+	private static final int WORLD_COLUMN_WIDTH = 35;
+	private static final int TIME_COLUMN_WIDTH = 45;
+	private static final int TYPE_COLUMN_WIDTH = 35;
+
+	private final JPanel listContainer = new JPanel();
+
+	private ShootingStarsPanelHeader worldHeader;
+	private ShootingStarsPanelHeader minTimeHeader;
+	private ShootingStarsPanelHeader maxTimeHeader;
+	private ShootingStarsPanelHeader locationHeader;
+	private ShootingStarsPanelHeader worldTypeHeader;
+
+	private ShootingStarsOrder orderIndex = ShootingStarsOrder.MAX_TIME;
+	private boolean ascendingOrder = true;
+
+	private final ArrayList<ShootingStarsTableRow> rows = new ArrayList<>();
+
+	private ShootingStarsPlugin plugin;
 
 	@Getter
 	private boolean open = false;
 
-	private JScrollPane scrollPane;
-	private GridBagConstraints c = new GridBagConstraints();
-
 	public ShootingStarsPanel(ShootingStarsPlugin plugin)
 	{
-		super(false);
-
 		this.plugin = plugin;
 
-		setBackground(ColorScheme.DARK_GRAY_COLOR);
-		setLayout(new BorderLayout());
+		setBorder(null);
+		setLayout(new DynamicGridLayout(0, 1));
 
-		// Create the container for the title and refresh task button
-		JPanel topContainer = new JPanel();
-		topContainer.setLayout(new BorderLayout());
+		JPanel headerContainer = buildHeader();
 
-		JPanel titlePanel = new JPanel();
-		titlePanel.setBorder(new EmptyBorder(10, 10, 10, 10));
-		titlePanel.setLayout(new BorderLayout());
+		listContainer.setLayout(new GridLayout(0, 1));
 
-		JLabel title = new JLabel();
-		title.setText("Shooting Stars");
-		title.setForeground(Color.WHITE);
-		titlePanel.add(title, BorderLayout.WEST);
-		topContainer.add(titlePanel, BorderLayout.NORTH);
-
-		add(topContainer, BorderLayout.NORTH);
-
-		// Create the task list panel
-		starsListPanel.setLayout(new GridBagLayout());
-		starsListPanel.setBackground(ColorScheme.DARK_GRAY_COLOR);
-		c.insets = new Insets(0, 2, 2, 2);
-		c.fill = GridBagConstraints.HORIZONTAL;
-		c.weightx = 1;
-		c.gridx = 0;
-		c.anchor = GridBagConstraints.PAGE_START;
-
-		scrollPane = new JScrollPane(starsListPanel);
-		scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-		scrollPane.setBorder(new EmptyBorder(1, 0, 0, 0));
-		scrollPane.setBackground(ColorScheme.DARKER_GRAY_COLOR);
-
-		add(scrollPane, BorderLayout.CENTER);
+		add(headerContainer);
+		add(listContainer);
 	}
 
-	public void addStar(JPanel shootingStarsPanel, ShootingStarsData data)
+	/**
+	 * Builds the entire table header.
+	 */
+	private JPanel buildHeader()
 	{
-		ShootingStarsSinglePanel starsSinglePanel = new ShootingStarsSinglePanel(data);
-		shootingStarsPanel.add(starsSinglePanel, c);
-		c.gridy += 1;
-		starsList.add(starsSinglePanel);
+		JPanel header = new JPanel(new BorderLayout());
+		JPanel leftSide = new JPanel(new BorderLayout());
+		JPanel rightSide = new JPanel(new BorderLayout());
+
+		worldHeader = new ShootingStarsPanelHeader("W", orderIndex == ShootingStarsOrder.WORLD, ascendingOrder);
+		worldHeader.setPreferredSize(new Dimension(WORLD_COLUMN_WIDTH, 0));
+		worldHeader.addMouseListener(new MouseAdapter()
+		{
+			@Override
+			public void mousePressed(MouseEvent mouseEvent)
+			{
+				if (SwingUtilities.isRightMouseButton(mouseEvent))
+				{
+					return;
+				}
+				ascendingOrder = orderIndex != ShootingStarsOrder.WORLD || !ascendingOrder;
+				orderBy(ShootingStarsOrder.WORLD);
+			}
+		});
+
+		minTimeHeader = new ShootingStarsPanelHeader("Min", orderIndex == ShootingStarsOrder.MIN_TIME, ascendingOrder);
+		minTimeHeader.setPreferredSize(new Dimension(TIME_COLUMN_WIDTH, 0));
+		minTimeHeader.addMouseListener(new MouseAdapter()
+		{
+			@Override
+			public void mousePressed(MouseEvent mouseEvent)
+			{
+				if (SwingUtilities.isRightMouseButton(mouseEvent))
+				{
+					return;
+				}
+				ascendingOrder = orderIndex != ShootingStarsOrder.MIN_TIME || !ascendingOrder;
+				orderBy(ShootingStarsOrder.MIN_TIME);
+			}
+		});
+
+		maxTimeHeader = new ShootingStarsPanelHeader("Max", orderIndex == ShootingStarsOrder.MAX_TIME, ascendingOrder);
+		maxTimeHeader.setPreferredSize(new Dimension(TIME_COLUMN_WIDTH, 0));
+		maxTimeHeader.addMouseListener(new MouseAdapter()
+		{
+			@Override
+			public void mousePressed(MouseEvent mouseEvent)
+			{
+				if (SwingUtilities.isRightMouseButton(mouseEvent))
+				{
+					return;
+				}
+				ascendingOrder = orderIndex != ShootingStarsOrder.MAX_TIME || !ascendingOrder;
+				orderBy(ShootingStarsOrder.MAX_TIME);
+			}
+		});
+
+		locationHeader = new ShootingStarsPanelHeader("Location", orderIndex == ShootingStarsOrder.LOCATION, ascendingOrder);
+		locationHeader.addMouseListener(new MouseAdapter()
+		{
+			@Override
+			public void mousePressed(MouseEvent mouseEvent)
+			{
+				if (SwingUtilities.isRightMouseButton(mouseEvent))
+				{
+					return;
+				}
+				ascendingOrder = orderIndex != ShootingStarsOrder.LOCATION || !ascendingOrder;
+				orderBy(ShootingStarsOrder.LOCATION);
+			}
+		});
+
+		worldTypeHeader = new ShootingStarsPanelHeader("T", orderIndex == ShootingStarsOrder.TYPE, ascendingOrder);
+		worldTypeHeader.setPreferredSize(new Dimension(TYPE_COLUMN_WIDTH, 0));
+		worldTypeHeader.addMouseListener(new MouseAdapter()
+		{
+			@Override
+			public void mousePressed(MouseEvent mouseEvent)
+			{
+				if (SwingUtilities.isRightMouseButton(mouseEvent))
+				{
+					return;
+				}
+				ascendingOrder = orderIndex != ShootingStarsOrder.TYPE || !ascendingOrder;
+				orderBy(ShootingStarsOrder.TYPE);
+			}
+		});
+
+		leftSide.add(worldHeader, BorderLayout.WEST);
+		leftSide.add(minTimeHeader, BorderLayout.CENTER);
+		leftSide.add(maxTimeHeader, BorderLayout.EAST);
+		rightSide.add(locationHeader, BorderLayout.CENTER);
+		rightSide.add(worldTypeHeader, BorderLayout.EAST);
+
+		header.add(leftSide, BorderLayout.WEST);
+		header.add(rightSide, BorderLayout.CENTER);
+
+		return header;
+	}
+
+	private void orderBy(ShootingStarsOrder order)
+	{
+		worldHeader.highlight(false, ascendingOrder);
+		minTimeHeader.highlight(false, ascendingOrder);
+		maxTimeHeader.highlight(false, ascendingOrder);
+		locationHeader.highlight(false, ascendingOrder);
+		worldTypeHeader.highlight(false, ascendingOrder);
+
+		switch (order)
+		{
+			case WORLD:
+				worldHeader.highlight(true, ascendingOrder);
+				break;
+			case MIN_TIME:
+				minTimeHeader.highlight(true, ascendingOrder);
+				break;
+			case MAX_TIME:
+				maxTimeHeader.highlight(true, ascendingOrder);
+				break;
+			case LOCATION:
+				locationHeader.highlight(true, ascendingOrder);
+				break;
+			case TYPE:
+				worldTypeHeader.highlight(true, ascendingOrder);
+				break;
+		}
+
+		orderIndex = order;
+		updateList();
+	}
+
+	void updateList()
+	{
+		rows.sort((r1, r2) ->
+		{
+			switch (orderIndex)
+			{
+				case WORLD:
+					return getCompareValue(r1, r2, row -> row.getWorld().getId());
+				case MIN_TIME:
+					return getCompareValue(r1, r2, ShootingStarsTableRow::getMinTime);
+				case MAX_TIME:
+					return getCompareValue(r1, r2, ShootingStarsTableRow::getMaxTime);
+				case LOCATION:
+					return getCompareValue(r1, r2, ShootingStarsTableRow::getStarLocation);
+				case TYPE:
+					return getCompareValue(r1, r2, ShootingStarsTableRow::getWorldType);
+				default:
+					return 0;
+			}
+		});
+
+		listContainer.removeAll();
+
+		int currentWorld = plugin.getCurrentWorld();
+
+		int i = 0;
+		for (ShootingStarsTableRow row : rows)
+		{
+			// Disallow old stars from being displayed
+			Duration timeSinceLanded = Duration.between(row.getMaxTime(), Instant.now());
+			if (timeSinceLanded.toMinutes() < plugin.getConfig().shootingStarExpirationLength())
+			{
+				row.updateStatus(row.getWorld().getId() == currentWorld);
+				setColorOnRow(row, i++ % 2 == 0);
+				listContainer.add(row);
+			}
+		}
+
+		listContainer.revalidate();
+		listContainer.repaint();
+	}
+
+	private int getCompareValue(ShootingStarsTableRow row1, ShootingStarsTableRow row2, Function<ShootingStarsTableRow, Comparable> compareByFn)
+	{
+		Ordering<Comparable> ordering = Ordering.natural();
+		if (!ascendingOrder)
+		{
+			ordering = ordering.reverse();
+		}
+		ordering = ordering.nullsLast();
+		return ordering.compare(compareByFn.apply(row1), compareByFn.apply(row2));
+	}
+
+	void populate(List<ShootingStarsData> stars)
+	{
+		rows.clear();
+
+		for (int i = 0; i < stars.size(); i++)
+		{
+			ShootingStarsData star = stars.get(i);
+			if (isAllowedWorld(star))
+			{
+				rows.add(buildRow(star, i % 2 == 0));
+			}
+		}
+
+		updateList();
+	}
+
+	private ShootingStarsTableRow buildRow(ShootingStarsData star, boolean stripe)
+	{
+		World world = plugin.getWorldService().getWorlds().findWorld(star.getWorld());
+		boolean current = plugin.getCurrentWorld() == star.getWorld();
+		ShootingStarsTableRow row = new ShootingStarsTableRow(
+			world, current,
+			Instant.ofEpochSecond(star.getMinTime()),
+			Instant.ofEpochSecond(star.getMaxTime()),
+			star.getLocation(), plugin::hopTo);
+
+		setColorOnRow(row, stripe);
+		return row;
+	}
+
+	private void setColorOnRow(ShootingStarsTableRow row, boolean stripe)
+	{
+		EnumSet<WorldType> types = row.getWorld().getTypes();
+		Color c = stripe ? ODD_ROW : ColorScheme.DARK_GRAY_COLOR;
+		if (row.getStarLocation() == ShootingStarsLocation.WILDERNESS
+			|| types.contains(WorldType.PVP)
+			|| types.contains(WorldType.DEADMAN)
+			|| types.contains(WorldType.DEADMAN_TOURNAMENT))
+		{
+			c = new Color(
+				c.getRed(),
+				c.getGreen() / 2,
+				c.getBlue() / 2,
+				c.getAlpha()
+			);
+		}
+
+		row.setBackground(c);
 	}
 
 	private boolean isAllowedWorld(ShootingStarsData starData)
 	{
 		// Disallow old stars from being displayed
-		Duration timeSinceLanded = Duration.between(Instant.ofEpochMilli(starData.getMaxTime() * 1000), Instant.now());
+		Duration timeSinceLanded = Duration.between(Instant.ofEpochSecond(starData.getMaxTime()), Instant.now());
 		if (timeSinceLanded.toMinutes() >= plugin.getConfig().shootingStarExpirationLength())
 		{
 			return false;
@@ -125,7 +340,7 @@ public class ShootingStarsPanel extends PluginPanel
 			return false;
 
 		// Disallow various landing sites (depending on config)
-	    switch(starData.getLocation())
+		switch (starData.getLocation())
 		{
 			case ASGARNIA:
 				return plugin.getConfig().shootingStarShowAsgarniaWorlds();
@@ -156,50 +371,7 @@ public class ShootingStarsPanel extends PluginPanel
 			case WILDERNESS:
 				return plugin.getConfig().shootingStarShowWildernessWorlds();
 		}
-	    return true;
-	}
-
-	public void reloadListPanel()
-	{
-		c.gridy = 0;
-		c.weighty = 0;
-		// Remove all old panels
-		for (ShootingStarsSinglePanel starsSinglePanel : starsList)
-		{
-			starsListPanel.remove(starsSinglePanel);
-		}
-		starsList.clear();
-
-		// Add new panels. Need to keep track of the last one to give it extra weighty (to put all extra space after it)
-		ArrayList<ShootingStarsData> starsData = plugin.getStarData();
-		ShootingStarsData lastData = null;
-		for (int i = 0; i < starsData.size(); i++)
-		{
-			ShootingStarsData starData = starsData.get(i);
-			// Skip certain worlds based on config
-			if (!isAllowedWorld(starData))
-                continue;
-
-			if (lastData != null)
-				addStar(starsListPanel, lastData);
-			lastData = starData;
-		}
-
-		// Add the last panel with weighty 1
-		c.weighty = 1;
-		if (lastData != null)
-			addStar(starsListPanel, lastData);
-
-		repaint();
-		revalidate();
-	}
-
-	public void refreshPanels()
-	{
-		for (ShootingStarsSinglePanel starsSinglePanel : starsList)
-		{
-			starsSinglePanel.updateLabels();
-		}
+		return true;
 	}
 
 	public void onActivate()

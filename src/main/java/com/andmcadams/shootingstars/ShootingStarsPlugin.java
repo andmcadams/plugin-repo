@@ -38,11 +38,18 @@ import javax.swing.SwingUtilities;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import net.runelite.api.ChatMessageType;
 import net.runelite.api.Client;
 import net.runelite.api.GameState;
+import net.runelite.api.events.ChatMessage;
 import net.runelite.api.events.GameTick;
 import net.runelite.api.widgets.Widget;
+import net.runelite.api.widgets.WidgetInfo;
 import net.runelite.client.callback.ClientThread;
+import net.runelite.client.chat.ChatColorType;
+import net.runelite.client.chat.ChatMessageBuilder;
+import net.runelite.client.chat.ChatMessageManager;
+import net.runelite.client.chat.QueuedMessage;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.events.ConfigChanged;
@@ -54,6 +61,9 @@ import net.runelite.client.ui.ClientToolbar;
 import net.runelite.client.ui.NavigationButton;
 import net.runelite.client.ui.overlay.OverlayManager;
 import net.runelite.client.util.ImageUtil;
+import net.runelite.client.util.WorldUtil;
+import net.runelite.http.api.worlds.World;
+import net.runelite.http.api.worlds.WorldResult;
 
 @Slf4j
 @PluginDescriptor(
@@ -65,6 +75,9 @@ public class ShootingStarsPlugin extends Plugin
 {
 	@Inject
 	Client client;
+
+	@Inject
+	private ChatMessageManager chatMessageManager;
 
 	@Inject
 	private ShootingStarsDataManager manager;
@@ -150,7 +163,7 @@ public class ShootingStarsPlugin extends Plugin
 
 		// Set up the sidebar panel
 		shootingStarsPanel = new ShootingStarsPanel(this);
-		final BufferedImage icon = ImageUtil.getResourceStreamFromClass(getClass(), "/shooting_stars_icon.png");
+		final BufferedImage icon = ImageUtil.loadImageResource(getClass(), "/shooting_stars_icon.png");
 		navButton = NavigationButton.builder().tooltip("Shooting Stars").icon(icon).priority(7).panel(shootingStarsPanel).build();
 		clientToolbar.addNavigation(navButton);
 	}
@@ -212,6 +225,8 @@ public class ShootingStarsPlugin extends Plugin
 	@Subscribe
 	public void onGameTick(GameTick gameTick)
 	{
+		handleHop();
+
 		Widget chatbox = client.getWidget(229, 1);
 		if (chatbox != null)
 		{
@@ -253,7 +268,7 @@ public class ShootingStarsPlugin extends Plugin
 	public void updatePanelList()
 	{
 		log.debug("Update panel list");
-		SwingUtilities.invokeLater(() -> shootingStarsPanel.reloadListPanel());
+		SwingUtilities.invokeLater(() -> shootingStarsPanel.populate(starData));
 	}
 
 	@Schedule(
@@ -266,7 +281,7 @@ public class ShootingStarsPlugin extends Plugin
 		log.debug("Update panels");
 		if (shootingStarsPanel.isOpen())
 		{
-			SwingUtilities.invokeLater(() -> shootingStarsPanel.refreshPanels());
+			SwingUtilities.invokeLater(() -> shootingStarsPanel.updateList());
 		}
 	}
 
@@ -319,6 +334,130 @@ public class ShootingStarsPlugin extends Plugin
 					}
 				}, 30 * 1000);
 			}
+		}
+	}
+
+	/*
+		Stealing from quick hopper plugin from here on, close your eyes...
+	*/
+	int getCurrentWorld()
+	{
+		return client.getWorld();
+	}
+
+	private static final int DISPLAY_SWITCHER_MAX_ATTEMPTS = 3;
+	private net.runelite.api.World quickHopTargetWorld;
+	private int displaySwitcherAttempts = 0;
+
+	void hopTo(World world)
+	{
+		clientThread.invoke(() -> hop(world.getId()));
+	}
+
+	private void hop(int worldId)
+	{
+		assert client.isClientThread();
+
+		WorldResult worldResult = worldService.getWorlds();
+		if (worldResult == null)
+		{
+			return;
+		}
+		// Don't try to hop if the world doesn't exist
+		World world = worldResult.findWorld(worldId);
+		if (world == null)
+		{
+			return;
+		}
+
+		final net.runelite.api.World rsWorld = client.createWorld();
+		rsWorld.setActivity(world.getActivity());
+		rsWorld.setAddress(world.getAddress());
+		rsWorld.setId(world.getId());
+		rsWorld.setPlayerCount(world.getPlayers());
+		rsWorld.setLocation(world.getLocation());
+		rsWorld.setTypes(WorldUtil.toWorldTypes(world.getTypes()));
+
+		String chatMessage = new ChatMessageBuilder()
+			.append(ChatColorType.NORMAL)
+			.append("Quick-hopping to World ")
+			.append(ChatColorType.HIGHLIGHT)
+			.append(Integer.toString(world.getId()))
+			.append(ChatColorType.NORMAL)
+			.append("..")
+			.build();
+
+		chatMessageManager
+			.queue(QueuedMessage.builder()
+				.type(ChatMessageType.CONSOLE)
+				.runeLiteFormattedMessage(chatMessage)
+				.build());
+
+		if (client.getGameState() == GameState.LOGIN_SCREEN)
+		{
+			// on the login screen we can just change the world by ourselves
+			client.changeWorld(rsWorld);
+			return;
+		}
+
+		quickHopTargetWorld = rsWorld;
+	}
+
+	private void handleHop()
+	{
+		if (quickHopTargetWorld == null)
+		{
+			return;
+		}
+
+		if (client.getWidget(WidgetInfo.WORLD_SWITCHER_LIST) == null)
+		{
+			client.openWorldHopper();
+
+			if (++displaySwitcherAttempts >= DISPLAY_SWITCHER_MAX_ATTEMPTS)
+			{
+				String chatMessage = new ChatMessageBuilder()
+					.append(ChatColorType.NORMAL)
+					.append("Failed to quick-hop after ")
+					.append(ChatColorType.HIGHLIGHT)
+					.append(Integer.toString(displaySwitcherAttempts))
+					.append(ChatColorType.NORMAL)
+					.append(" attempts.")
+					.build();
+
+				chatMessageManager
+					.queue(QueuedMessage.builder()
+						.type(ChatMessageType.CONSOLE)
+						.runeLiteFormattedMessage(chatMessage)
+						.build());
+
+				resetQuickHopper();
+			}
+		}
+		else
+		{
+			client.hopToWorld(quickHopTargetWorld);
+			resetQuickHopper();
+		}
+	}
+
+	private void resetQuickHopper()
+	{
+		quickHopTargetWorld = null;
+		displaySwitcherAttempts = 0;
+	}
+
+	@Subscribe
+	public void onChatMessage(ChatMessage event)
+	{
+		if (event.getType() != ChatMessageType.GAMEMESSAGE)
+		{
+			return;
+		}
+
+		if (event.getMessage().equals("Please finish what you're doing before using the World Switcher."))
+		{
+			resetQuickHopper();
 		}
 	}
 }

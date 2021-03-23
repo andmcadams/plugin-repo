@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017, Adam <Adam@sigterm.info>
+ * Copyright (c) 2021, Cyborger1, Psikoi <https://github.com/Psikoi> (Basis)
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -22,18 +22,14 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 package com.andmcadams.shootingstars;
 
-import java.awt.Dimension;
-import javax.swing.JPanel;
-import net.runelite.client.ui.PluginPanel;
-
-class FixedWidthPanel extends JPanel
+public enum ShootingStarsOrder
 {
-	@Override
-	public Dimension getPreferredSize()
-	{
-		return new Dimension(PluginPanel.PANEL_WIDTH, super.getPreferredSize().height);
-	}
-
+	WORLD,
+	MIN_TIME,
+	MAX_TIME,
+	LOCATION,
+	TYPE
 }
