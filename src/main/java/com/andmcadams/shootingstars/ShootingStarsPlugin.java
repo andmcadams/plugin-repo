@@ -29,6 +29,8 @@ import java.awt.image.BufferedImage;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.inject.Inject;
@@ -84,6 +86,7 @@ public class ShootingStarsPlugin extends Plugin
 	private final int SECONDS_BETWEEN_REFRESH = 10;
 	private final int SECONDS_BETWEEN_UPLOADS = 10;
 	private final int SECONDS_BETWEEN_GET = 30;
+	private boolean canRefresh;
 
 	private ShootingStarsLocation lastLoc;
 	private int lastWorld;
@@ -128,6 +131,7 @@ public class ShootingStarsPlugin extends Plugin
 	{
 		lastLoc = null;
 		lastWorld = -1;
+		canRefresh = true;
 
 		// Set up config variables
 		shootingStarPostEndpoint = config.shootingStarPostEndpointConfig();
@@ -243,7 +247,8 @@ public class ShootingStarsPlugin extends Plugin
 	)
 	public void updatePanels()
 	{
-		SwingUtilities.invokeLater(() -> shootingStarsPanel.refresh());
+		if (shootingStarsPanel.isOpen())
+			SwingUtilities.invokeLater(() -> shootingStarsPanel.refresh());
 	}
 
 	@Schedule(
@@ -256,22 +261,46 @@ public class ShootingStarsPlugin extends Plugin
 		manager.submitToAPI();
 	}
 
+	@Schedule(
+		period = SECONDS_BETWEEN_GET,
+		unit = ChronoUnit.SECONDS,
+		asynchronous = true
+	)
+	public void attemptGetRequest()
+	{
+		hitAPI();
+	}
+
+
 	private final Pattern validKeyRegex = Pattern.compile("^[a-zA-Z]{1,10}$");
+
 	private boolean isInvalidKey(String sharedKey)
 	{
 		log.info("key is valid: " + validKeyRegex.matcher(sharedKey).find());
 		return !validKeyRegex.matcher(sharedKey).find();
 	}
 
-	@Schedule(
-		period = SECONDS_BETWEEN_GET,
-		unit = ChronoUnit.SECONDS,
-		asynchronous = true
-	)
 	public void hitAPI()
 	{
-		if ((client.getGameState() == GameState.LOGGED_IN || client.getGameState() == GameState.HOPPING) && !keyError)
-			manager.makeGetRequest();
+		if (canRefresh)
+		{
+			if ((client.getGameState() == GameState.LOGGED_IN || client.getGameState() == GameState.HOPPING) &&
+				!keyError && shootingStarsPanel.isOpen())
+			{
+				canRefresh = false;
+				manager.makeGetRequest();
+				Timer t = new Timer();
+				t.schedule(new TimerTask()
+				{
+					@Override
+					public void run()
+					{
+						log.info("Resetting canRefresh");
+						canRefresh = true;
+					}
+				}, 60 * 1000);
+			}
+		}
 	}
 
 }

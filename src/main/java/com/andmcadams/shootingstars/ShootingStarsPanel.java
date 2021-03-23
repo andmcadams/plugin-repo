@@ -35,6 +35,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.border.EmptyBorder;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.client.ui.ColorScheme;
 import net.runelite.client.ui.PluginPanel;
@@ -46,6 +47,9 @@ public class ShootingStarsPanel extends PluginPanel
 	ShootingStarsPlugin plugin;
 	FixedWidthPanel starsListPanel = new FixedWidthPanel();
 	ArrayList<ShootingStarsSinglePanel> starsList = new ArrayList<>();
+
+	@Getter
+	private boolean open = false;
 
 	private JScrollPane scrollPane;
 	private GridBagConstraints c = new GridBagConstraints();
@@ -123,5 +127,18 @@ public class ShootingStarsPanel extends PluginPanel
 
 		repaint();
 		revalidate();
+	}
+
+	public void onActivate()
+	{
+		log.info("Activated");
+		open = true;
+		plugin.hitAPI();
+	}
+
+	public void onDeactivate()
+	{
+		log.info("Deactivated");
+		open = false;
 	}
 }
