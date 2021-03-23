@@ -104,6 +104,42 @@ public class ShootingStarsPanel extends PluginPanel
 		starsList.add(starsSinglePanel);
 	}
 
+	private boolean allowed_world(ShootingStarsData starData)
+	{
+	    switch(starData.getLocation())
+		{
+			case ASGARNIA:
+				return plugin.config.shootingStarShowAsgarniaWorlds();
+			case KARAMJA:
+				return plugin.config.shootingStarShowKaramjaWorlds();
+			case FELDIP_HILLS:
+				return plugin.config.shootingStarShowFeldipWorlds();
+			case FOSSIL_ISLAND:
+				return plugin.config.shootingStarShowFossilIslandWorlds();
+			case FREMENNIK:
+				return plugin.config.shootingStarShowFremennikWorlds();
+			case KOUREND:
+				return plugin.config.shootingStarShowKourendWorlds();
+			case KANDARIN:
+				return plugin.config.shootingStarShowKandarinWorlds();
+			case KEBOS:
+				return plugin.config.shootingStarShowKebosWorlds();
+			case KHARIDIAN_DESERT:
+				return plugin.config.shootingStarShowDesertWorlds();
+			case MISTHALIN:
+				return plugin.config.shootingStarShowMisthalinWorlds();
+			case MORYTANIA:
+				return plugin.config.shootingStarShowMorytaniaWorlds();
+			case PISCATORIS:
+				return plugin.config.shootingStarShowPiscatorisWorlds();
+			case TIRANNWN:
+				return plugin.config.shootingStarShowTirannwnWorlds();
+			case WILDERNESS:
+				return plugin.config.shootingStarShowWildernessWorlds();
+		}
+	    return true;
+	}
+
 	public void reloadListPanel()
 	{
 		c.gridy = 0;
@@ -117,6 +153,9 @@ public class ShootingStarsPanel extends PluginPanel
 		for (int i = 0; i < starsData.size(); i++)
 		{
 			ShootingStarsData starData = starsData.get(i);
+			// Skip certain worlds
+			if (!allowed_world(starData))
+                continue;
 			if (i == starsData.size() - 1)
 			{
 				c.weighty = 1;
