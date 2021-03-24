@@ -367,6 +367,18 @@ public class ShootingStarsPlugin extends Plugin
 
 	private boolean isAllowedWorld(ShootingStarsData starData)
 	{
+		// Protect against non-existent world ids
+		WorldResult worldResult = worldService.getWorlds();
+		if (worldResult == null)
+		{
+			return false;
+		}
+		World world = worldResult.findWorld(starData.getWorld());
+		if (world == null)
+		{
+			return false;
+		}
+
 		// Disallow old stars from being displayed
 		Duration timeSinceLanded = Duration.between(Instant.ofEpochSecond(starData.getMaxTime()), Instant.now());
 		if (timeSinceLanded.toMinutes() >= config.shootingStarExpirationLength())
@@ -375,14 +387,9 @@ public class ShootingStarsPlugin extends Plugin
 		}
 
 		// Disallow PVP worlds from being displayed (depending on config)
-		if (!config.shootingStarShowPvpWorlds())
+		if (!config.shootingStarShowPvpWorlds() && world.getTypes().contains(WorldType.PVP))
 		{
-			WorldResult worldResult = worldService.getWorlds();
-			World world = worldResult.findWorld(starData.getWorld());
-			if (world.getTypes().contains(WorldType.PVP))
-			{
-				return false;
-			}
+			return false;
 		}
 
 		// Disallow various landing sites (depending on config)
