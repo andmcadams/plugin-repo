@@ -376,7 +376,12 @@ public class ShootingStarsPlugin extends Plugin
 
 	public void hopTo(World world)
 	{
-		clientThread.invoke(() -> hop(world.getId()));
+		hopTo(world.getId());
+	}
+
+	public void hopTo(int worldId)
+	{
+		clientThread.invoke(() -> hop(worldId));
 	}
 
 	private void hop(int worldId)
