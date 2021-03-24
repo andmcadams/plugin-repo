@@ -294,9 +294,6 @@ public class ShootingStarsTableRow extends JPanel
 		worldField.setForeground(world.getTypes().contains(WorldType.MEMBERS) ? MEMBERS_WORLD : FREE_WORLD);
 	}
 
-	/**
-	 * Builds the world list field (containing the country's flag and the world index).
-	 */
 	private JPanel buildWorldField()
 	{
 		JPanel column = new JPanel(new BorderLayout());
@@ -314,6 +311,7 @@ public class ShootingStarsTableRow extends JPanel
 		column.setBorder(new EmptyBorder(0, 5, 0, 5));
 
 		minTimeField = new JLabel();
+		minTimeField.setFont(FontManager.getRunescapeSmallFont());
 		column.add(minTimeField, BorderLayout.CENTER);
 
 		return column;
@@ -325,6 +323,7 @@ public class ShootingStarsTableRow extends JPanel
 		column.setBorder(new EmptyBorder(0, 5, 0, 5));
 
 		maxTimeField = new JLabel();
+		maxTimeField.setFont(FontManager.getRunescapeSmallFont());
 		column.add(maxTimeField, BorderLayout.CENTER);
 
 		return column;
