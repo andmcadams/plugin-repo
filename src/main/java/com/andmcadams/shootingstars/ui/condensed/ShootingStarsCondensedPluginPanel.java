@@ -27,6 +27,7 @@ package com.andmcadams.shootingstars.ui.condensed;
 import com.andmcadams.shootingstars.ShootingStarsData;
 import com.andmcadams.shootingstars.ShootingStarsLocation;
 import com.andmcadams.shootingstars.ShootingStarsPlugin;
+import com.andmcadams.shootingstars.ui.ShootingStarsPluginPanelBase;
 import com.google.common.collect.Ordering;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -42,17 +43,13 @@ import java.util.List;
 import java.util.function.Function;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
-import lombok.Getter;
-import lombok.extern.slf4j.Slf4j;
 import net.runelite.client.ui.ColorScheme;
 import net.runelite.client.ui.DynamicGridLayout;
-import net.runelite.client.ui.PluginPanel;
 import net.runelite.http.api.worlds.World;
 import net.runelite.http.api.worlds.WorldResult;
 import net.runelite.http.api.worlds.WorldType;
 
-@Slf4j
-public class ShootingStarsPanel extends PluginPanel
+public class ShootingStarsCondensedPluginPanel extends ShootingStarsPluginPanelBase
 {
 	private static final Color ODD_ROW = new Color(44, 44, 44);
 
@@ -73,14 +70,9 @@ public class ShootingStarsPanel extends PluginPanel
 
 	private final ArrayList<ShootingStarsTableRow> rows = new ArrayList<>();
 
-	private ShootingStarsPlugin plugin;
-
-	@Getter
-	private boolean open = false;
-
-	public ShootingStarsPanel(ShootingStarsPlugin plugin)
+	public ShootingStarsCondensedPluginPanel(ShootingStarsPlugin plugin)
 	{
-		this.plugin = plugin;
+		super(plugin);
 
 		setBorder(null);
 		setLayout(new DynamicGridLayout(0, 1));
@@ -224,6 +216,7 @@ public class ShootingStarsPanel extends PluginPanel
 		updateList();
 	}
 
+	@Override
 	public void updateList()
 	{
 		rows.sort((r1, r2) ->
@@ -277,6 +270,7 @@ public class ShootingStarsPanel extends PluginPanel
 		return ordering.compare(compareByFn.apply(row1), compareByFn.apply(row2));
 	}
 
+	@Override
 	public void populate(List<ShootingStarsData> stars)
 	{
 		rows.clear();
@@ -375,20 +369,6 @@ public class ShootingStarsPanel extends PluginPanel
 				return plugin.getConfig().shootingStarShowWildernessWorlds();
 		}
 		return true;
-	}
-
-	public void onActivate()
-	{
-		// If the panel is opened, try to run a get request to populate/refresh the panel.
-		log.debug("Activated");
-		open = true;
-		plugin.hitAPI();
-	}
-
-	public void onDeactivate()
-	{
-		log.debug("Deactivated");
-		open = false;
 	}
 
 }

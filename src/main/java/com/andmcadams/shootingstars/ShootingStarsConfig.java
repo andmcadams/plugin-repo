@@ -24,6 +24,7 @@
  */
 package com.andmcadams.shootingstars;
 
+import com.andmcadams.shootingstars.ui.ShootingStarsPanelType;
 import net.runelite.client.config.Config;
 import net.runelite.client.config.ConfigGroup;
 import net.runelite.client.config.ConfigItem;
@@ -37,6 +38,7 @@ public interface ShootingStarsConfig extends Config
 	String SHOOTING_STAR_GET_ENDPOINT_KEYNAME = "get endpoint";
 	String SHOOTING_STAR_SHARED_KEY_KEYNAME = "password";
 	String SHOOTING_STAR_EXPIRATION_LENGTH = "expiration";
+	String SHOOTING_STAR_PANEL_CLASS = "panelclass";
 	String SHOOTING_STAR_SHOW_PVP_WORLDS_KEYNAME = "pvp worlds";
 	String SHOOTING_STAR_SHOW_ASGARNIA_KEYNAME = "asgarnia";
 	String SHOOTING_STAR_SHOW_KARAMJA_KEYNAME = "karamja";
@@ -83,6 +85,17 @@ public interface ShootingStarsConfig extends Config
 	default int shootingStarExpirationLength()
 	{
 		return 2;
+	}
+
+	@ConfigItem(
+		keyName = SHOOTING_STAR_PANEL_CLASS,
+		position = 3,
+		name = "Stars Panel",
+		description = "Choose the shooting stars panel implementation"
+	)
+	default ShootingStarsPanelType shootingStarsPanelType()
+	{
+		return ShootingStarsPanelType.LARGE_PANELS;
 	}
 
 	@ConfigSection(

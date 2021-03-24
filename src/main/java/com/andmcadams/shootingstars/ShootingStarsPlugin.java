@@ -24,8 +24,7 @@
  */
 package com.andmcadams.shootingstars;
 
-// Change this import between .panels and .condensed
-import com.andmcadams.shootingstars.ui.condensed.ShootingStarsPanel;
+import com.andmcadams.shootingstars.ui.ShootingStarsPluginPanelBase;
 import com.google.inject.Provides;
 import java.awt.image.BufferedImage;
 import java.time.Instant;
@@ -138,8 +137,9 @@ public class ShootingStarsPlugin extends Plugin
 	@Getter
 	private boolean keyError = false;
 
-	private ShootingStarsPanel shootingStarsPanel;
-	private NavigationButton navButton;
+	private ShootingStarsPluginPanelBase shootingStarsPanel;
+	private NavigationButton navButton = null;
+	private final BufferedImage icon = ImageUtil.loadImageResource(getClass(), "/shooting_stars_icon.png");
 
 	@Provides
 	ShootingStarsConfig getConfig(ConfigManager configManager)
@@ -164,10 +164,7 @@ public class ShootingStarsPlugin extends Plugin
 		overlayManager.add(overlayPanel);
 
 		// Set up the sidebar panel
-		shootingStarsPanel = new ShootingStarsPanel(this);
-		final BufferedImage icon = ImageUtil.loadImageResource(getClass(), "/shooting_stars_icon.png");
-		navButton = NavigationButton.builder().tooltip("Shooting Stars").icon(icon).priority(7).panel(shootingStarsPanel).build();
-		clientToolbar.addNavigation(navButton);
+		loadPluginPanel();
 	}
 
 	@Override
@@ -203,10 +200,36 @@ public class ShootingStarsPlugin extends Plugin
 				shootingStarsSharedKey = config.shootingStarSharedKeyConfig();
 				keyError = isInvalidKey(shootingStarsSharedKey);
 				break;
+			case ShootingStarsConfig.SHOOTING_STAR_PANEL_CLASS:
+				loadPluginPanel();
+				updatePanelList();
+				break;
 			default:
 				updatePanelList();
 				break;
 		}
+	}
+
+	private void loadPluginPanel()
+	{
+		if (navButton != null)
+		{
+			clientToolbar.removeNavigation(navButton);
+		}
+
+		Class<? extends ShootingStarsPluginPanelBase> clazz = config.shootingStarsPanelType().getPanelClass();
+		try
+		{
+			shootingStarsPanel = clazz.getDeclaredConstructor(this.getClass()).newInstance(this);
+		}
+		catch (Exception e)
+		{
+			log.error("Error loading panel class", e);
+			return;
+		}
+
+		navButton = NavigationButton.builder().tooltip("Shooting Stars").icon(icon).priority(7).panel(shootingStarsPanel).build();
+		clientToolbar.addNavigation(navButton);
 	}
 
 	private final Pattern firstMinThenHour = Pattern.compile(".* next (\\d+) minutes to (\\d+) hours? (\\d+) .*");
@@ -270,7 +293,6 @@ public class ShootingStarsPlugin extends Plugin
 	public void updatePanelList()
 	{
 		log.debug("Update panel list");
-		// equivalent -> reloadListPanel()
 		SwingUtilities.invokeLater(() -> shootingStarsPanel.populate(starData));
 	}
 
@@ -284,7 +306,6 @@ public class ShootingStarsPlugin extends Plugin
 		log.debug("Update panels");
 		if (shootingStarsPanel.isOpen())
 		{
-			// equivalent -> refreshPanels()
 			SwingUtilities.invokeLater(() -> shootingStarsPanel.updateList());
 		}
 	}
