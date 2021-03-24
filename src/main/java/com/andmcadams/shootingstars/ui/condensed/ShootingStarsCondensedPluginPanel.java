@@ -46,7 +46,6 @@ import javax.swing.SwingUtilities;
 import net.runelite.client.ui.ColorScheme;
 import net.runelite.client.ui.DynamicGridLayout;
 import net.runelite.http.api.worlds.World;
-import net.runelite.http.api.worlds.WorldResult;
 import net.runelite.http.api.worlds.WorldType;
 
 public class ShootingStarsCondensedPluginPanel extends ShootingStarsPluginPanelBase
@@ -278,10 +277,7 @@ public class ShootingStarsCondensedPluginPanel extends ShootingStarsPluginPanelB
 		for (int i = 0; i < stars.size(); i++)
 		{
 			ShootingStarsData star = stars.get(i);
-			if (isAllowedWorld(star))
-			{
-				rows.add(buildRow(star, i % 2 == 0));
-			}
+			rows.add(buildRow(star, i % 2 == 0));
 		}
 
 		updateList();
@@ -319,56 +315,6 @@ public class ShootingStarsCondensedPluginPanel extends ShootingStarsPluginPanelB
 		}
 
 		row.setBackground(c);
-	}
-
-	private boolean isAllowedWorld(ShootingStarsData starData)
-	{
-		// Disallow old stars from being displayed
-		Duration timeSinceLanded = Duration.between(Instant.ofEpochSecond(starData.getMaxTime()), Instant.now());
-		if (timeSinceLanded.toMinutes() >= plugin.getConfig().shootingStarExpirationLength())
-		{
-			return false;
-		}
-
-		// Disallow PVP worlds from being displayed (depending on config)
-		WorldResult worldResult = plugin.getWorldService().getWorlds();
-		World world = worldResult.findWorld(starData.getWorld());
-		if (world.getTypes().contains(WorldType.PVP) && !plugin.getConfig().shootingStarShowPvpWorlds())
-			return false;
-
-		// Disallow various landing sites (depending on config)
-		switch (starData.getLocation())
-		{
-			case ASGARNIA:
-				return plugin.getConfig().shootingStarShowAsgarniaWorlds();
-			case KARAMJA:
-				return plugin.getConfig().shootingStarShowKaramjaWorlds();
-			case FELDIP_HILLS:
-				return plugin.getConfig().shootingStarShowFeldipWorlds();
-			case FOSSIL_ISLAND:
-				return plugin.getConfig().shootingStarShowFossilIslandWorlds();
-			case FREMENNIK:
-				return plugin.getConfig().shootingStarShowFremennikWorlds();
-			case KOUREND:
-				return plugin.getConfig().shootingStarShowKourendWorlds();
-			case KANDARIN:
-				return plugin.getConfig().shootingStarShowKandarinWorlds();
-			case KEBOS:
-				return plugin.getConfig().shootingStarShowKebosWorlds();
-			case KHARIDIAN_DESERT:
-				return plugin.getConfig().shootingStarShowDesertWorlds();
-			case MISTHALIN:
-				return plugin.getConfig().shootingStarShowMisthalinWorlds();
-			case MORYTANIA:
-				return plugin.getConfig().shootingStarShowMorytaniaWorlds();
-			case PISCATORIS:
-				return plugin.getConfig().shootingStarShowPiscatorisWorlds();
-			case TIRANNWN:
-				return plugin.getConfig().shootingStarShowTirannwnWorlds();
-			case WILDERNESS:
-				return plugin.getConfig().shootingStarShowWildernessWorlds();
-		}
-		return true;
 	}
 
 }

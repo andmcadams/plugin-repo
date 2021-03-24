@@ -27,6 +27,7 @@ package com.andmcadams.shootingstars;
 import com.andmcadams.shootingstars.ui.ShootingStarsPluginPanelBase;
 import com.google.inject.Provides;
 import java.awt.image.BufferedImage;
+import java.time.Duration;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
@@ -34,6 +35,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import javax.inject.Inject;
 import javax.swing.SwingUtilities;
 import lombok.Getter;
@@ -65,6 +67,7 @@ import net.runelite.client.util.ImageUtil;
 import net.runelite.client.util.WorldUtil;
 import net.runelite.http.api.worlds.World;
 import net.runelite.http.api.worlds.WorldResult;
+import net.runelite.http.api.worlds.WorldType;
 
 @Slf4j
 @PluginDescriptor(
@@ -293,7 +296,7 @@ public class ShootingStarsPlugin extends Plugin
 	public void updatePanelList()
 	{
 		log.debug("Update panel list");
-		SwingUtilities.invokeLater(() -> shootingStarsPanel.populate(starData));
+		SwingUtilities.invokeLater(() -> shootingStarsPanel.populate(starData.stream().filter(this::isAllowedWorld).collect(Collectors.toList())));
 	}
 
 	@Schedule(
@@ -360,6 +363,30 @@ public class ShootingStarsPlugin extends Plugin
 				}, 30 * 1000);
 			}
 		}
+	}
+
+	private boolean isAllowedWorld(ShootingStarsData starData)
+	{
+		// Disallow old stars from being displayed
+		Duration timeSinceLanded = Duration.between(Instant.ofEpochSecond(starData.getMaxTime()), Instant.now());
+		if (timeSinceLanded.toMinutes() >= config.shootingStarExpirationLength())
+		{
+			return false;
+		}
+
+		// Disallow PVP worlds from being displayed (depending on config)
+		if (!config.shootingStarShowPvpWorlds())
+		{
+			WorldResult worldResult = worldService.getWorlds();
+			World world = worldResult.findWorld(starData.getWorld());
+			if (world.getTypes().contains(WorldType.PVP))
+			{
+				return false;
+			}
+		}
+
+		// Disallow various landing sites (depending on config)
+		return starData.getLocation().getConfigFunction().apply(config);
 	}
 
 	/*
