@@ -237,11 +237,8 @@ public class ShootingStarsTableRow extends JPanel
 		String str;
 		long mins = s / 60;
 		long secs = s % 60;
-		if (mins > 99)
-		{
-			str = String.format("%dm", mins);
-		}
-		else if (negative)
+
+		if (negative)
 		{
 			if (mins > 9)
 			{
@@ -254,7 +251,14 @@ public class ShootingStarsTableRow extends JPanel
 		}
 		else
 		{
-			str = String.format("%02d:%02d", mins, secs);
+			if (mins > 99)
+			{
+				str = String.format("%dm", mins);
+			}
+			else
+			{
+				str = String.format("%02d:%02d", mins, secs);
+			}
 		}
 
 		return new StringBool(str, negative);
