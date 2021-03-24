@@ -189,7 +189,7 @@ public class ShootingStarsTableRow extends JPanel
 		locationField.setText(starLocation.getShortName());
 		if (!starLocation.getName().equals(starLocation.getShortName()))
 		{
-			locationField.setToolTipText(starLocation.getName());
+			((JPanel)locationField.getParent()).setToolTipText(starLocation.getName());
 		}
 
 		minPast = min.isBoolValue();
@@ -235,13 +235,26 @@ public class ShootingStarsTableRow extends JPanel
 		}
 
 		String str;
-		if (s / 60 > 99)
+		long mins = s / 60;
+		long secs = s % 60;
+		if (mins > 99)
 		{
-			str = String.format("%dm", s / 60);
+			str = String.format("%dm", mins);
+		}
+		else if (negative)
+		{
+			if (mins > 9)
+			{
+				str = String.format("-%dm", mins);
+			}
+			else
+			{
+				str = String.format("-%1d:%02d", mins, secs);
+			}
 		}
 		else
 		{
-			str = String.format("%02d:%02d", s / 60, s % 60);
+			str = String.format("%02d:%02d", mins, secs);
 		}
 
 		return new StringBool(str, negative);
@@ -350,7 +363,7 @@ public class ShootingStarsTableRow extends JPanel
 		}
 		if (types.contains(WorldType.TOURNAMENT) || types.contains(WorldType.DEADMAN_TOURNAMENT))
 		{
-			sb.append("T");
+			sb.append("C");
 		}
 		if (types.contains(WorldType.LEAGUE))
 		{
@@ -360,16 +373,19 @@ public class ShootingStarsTableRow extends JPanel
 		{
 			sb.append("H");
 		}
+		if (act.toLowerCase().contains("target"))
+		{
+			sb.append("T");
+		}
 
 		worldTypeField = new JLabel(sb.toString());
 		worldTypeField.setFont(FontManager.getRunescapeSmallFont());
 
-		if (act != null && !act.equals(""))
-		{
-			worldTypeField.setToolTipText(act);
-		}
-
 		column.add(worldTypeField, BorderLayout.EAST);
+		if (!act.equals("-"))
+		{
+			column.setToolTipText(act);
+		}
 		return column;
 	}
 
