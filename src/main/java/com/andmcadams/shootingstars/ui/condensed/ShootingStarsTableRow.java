@@ -36,6 +36,7 @@ import java.util.EnumSet;
 import java.util.function.Consumer;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -257,7 +258,7 @@ public class ShootingStarsTableRow extends JPanel
 			}
 			else
 			{
-				str = String.format("%02d:%02d", mins, secs);
+				str = String.format("%1d:%02d", mins, secs);
 			}
 		}
 
@@ -312,6 +313,7 @@ public class ShootingStarsTableRow extends JPanel
 
 		minTimeField = new JLabel();
 		minTimeField.setFont(FontManager.getRunescapeSmallFont());
+		minTimeField.setHorizontalAlignment(SwingConstants.RIGHT);
 		column.add(minTimeField, BorderLayout.CENTER);
 
 		return column;
@@ -324,6 +326,7 @@ public class ShootingStarsTableRow extends JPanel
 
 		maxTimeField = new JLabel();
 		maxTimeField.setFont(FontManager.getRunescapeSmallFont());
+		maxTimeField.setHorizontalAlignment(SwingConstants.RIGHT);
 		column.add(maxTimeField, BorderLayout.CENTER);
 
 		return column;
