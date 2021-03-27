@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017, Adam <Adam@sigterm.info>
+ * Copyright (c) 2021, Cyborger1
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -22,18 +22,27 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.andmcadams.shootingstars;
+package com.andmcadams.shootingstars.ui;
 
-import java.awt.Dimension;
-import javax.swing.JPanel;
-import net.runelite.client.ui.PluginPanel;
+import com.andmcadams.shootingstars.ui.condensed.ShootingStarsCondensedPluginPanel;
+import com.andmcadams.shootingstars.ui.panels.ShootingStarsPluginPanel;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
-class FixedWidthPanel extends JPanel
+@Getter
+@AllArgsConstructor
+public enum ShootingStarsPanelType
 {
-	@Override
-	public Dimension getPreferredSize()
-	{
-		return new Dimension(PluginPanel.PANEL_WIDTH, super.getPreferredSize().height);
-	}
+	LARGE_PANELS("Large Panels", ShootingStarsPluginPanel.class.asSubclass(ShootingStarsPluginPanelBase.class)),
+	CONDENSED("Condensed", ShootingStarsCondensedPluginPanel.class.asSubclass(ShootingStarsPluginPanelBase.class))
+	;
 
+	private final String name;
+	private final Class<? extends ShootingStarsPluginPanelBase> panelClass;
+
+	@Override
+	public String toString()
+	{
+		return getName();
+	}
 }

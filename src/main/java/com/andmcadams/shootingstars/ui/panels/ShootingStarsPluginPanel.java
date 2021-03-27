@@ -22,48 +22,36 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.andmcadams.shootingstars;
+package com.andmcadams.shootingstars.ui.panels;
 
+import com.andmcadams.shootingstars.ShootingStarsData;
+import com.andmcadams.shootingstars.ShootingStarsPlugin;
+import com.andmcadams.shootingstars.ui.ShootingStarsPluginPanelBase;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.time.Duration;
-import java.time.Instant;
 import java.util.ArrayList;
+import java.util.List;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.border.EmptyBorder;
-import lombok.Getter;
-import lombok.extern.slf4j.Slf4j;
 import net.runelite.client.ui.ColorScheme;
-import net.runelite.client.ui.PluginPanel;
-import net.runelite.http.api.worlds.World;
-import net.runelite.http.api.worlds.WorldResult;
-import net.runelite.http.api.worlds.WorldType;
 
-@Slf4j
-public class ShootingStarsPanel extends PluginPanel
+public class ShootingStarsPluginPanel extends ShootingStarsPluginPanelBase
 {
-
-	ShootingStarsPlugin plugin;
 	FixedWidthPanel starsListPanel = new FixedWidthPanel();
 	ArrayList<ShootingStarsSinglePanel> starsList = new ArrayList<>();
-
-	@Getter
-	private boolean open = false;
 
 	private JScrollPane scrollPane;
 	private GridBagConstraints c = new GridBagConstraints();
 
-	public ShootingStarsPanel(ShootingStarsPlugin plugin)
+	public ShootingStarsPluginPanel(ShootingStarsPlugin plugin)
 	{
-		super(false);
-
-		this.plugin = plugin;
+		super(plugin, false);
 
 		setBackground(ColorScheme.DARK_GRAY_COLOR);
 		setLayout(new BorderLayout());
@@ -109,57 +97,8 @@ public class ShootingStarsPanel extends PluginPanel
 		starsList.add(starsSinglePanel);
 	}
 
-	private boolean isAllowedWorld(ShootingStarsData starData)
-	{
-		// Disallow old stars from being displayed
-		Duration timeSinceLanded = Duration.between(Instant.ofEpochMilli(starData.getMaxTime() * 1000), Instant.now());
-		if (timeSinceLanded.toMinutes() >= plugin.getConfig().shootingStarExpirationLength())
-		{
-			return false;
-		}
-
-		// Disallow PVP worlds from being displayed (depending on config)
-		WorldResult worldResult = plugin.getWorldService().getWorlds();
-		World world = worldResult.findWorld(starData.getWorld());
-		if (world.getTypes().contains(WorldType.PVP) && !plugin.getConfig().shootingStarShowPvpWorlds())
-			return false;
-
-		// Disallow various landing sites (depending on config)
-	    switch(starData.getLocation())
-		{
-			case ASGARNIA:
-				return plugin.getConfig().shootingStarShowAsgarniaWorlds();
-			case KARAMJA:
-				return plugin.getConfig().shootingStarShowKaramjaWorlds();
-			case FELDIP_HILLS:
-				return plugin.getConfig().shootingStarShowFeldipWorlds();
-			case FOSSIL_ISLAND:
-				return plugin.getConfig().shootingStarShowFossilIslandWorlds();
-			case FREMENNIK:
-				return plugin.getConfig().shootingStarShowFremennikWorlds();
-			case KOUREND:
-				return plugin.getConfig().shootingStarShowKourendWorlds();
-			case KANDARIN:
-				return plugin.getConfig().shootingStarShowKandarinWorlds();
-			case KEBOS:
-				return plugin.getConfig().shootingStarShowKebosWorlds();
-			case KHARIDIAN_DESERT:
-				return plugin.getConfig().shootingStarShowDesertWorlds();
-			case MISTHALIN:
-				return plugin.getConfig().shootingStarShowMisthalinWorlds();
-			case MORYTANIA:
-				return plugin.getConfig().shootingStarShowMorytaniaWorlds();
-			case PISCATORIS:
-				return plugin.getConfig().shootingStarShowPiscatorisWorlds();
-			case TIRANNWN:
-				return plugin.getConfig().shootingStarShowTirannwnWorlds();
-			case WILDERNESS:
-				return plugin.getConfig().shootingStarShowWildernessWorlds();
-		}
-	    return true;
-	}
-
-	public void reloadListPanel()
+	@Override
+	public void populate(List<ShootingStarsData> starsData)
 	{
 		c.gridy = 0;
 		c.weighty = 0;
@@ -171,15 +110,9 @@ public class ShootingStarsPanel extends PluginPanel
 		starsList.clear();
 
 		// Add new panels. Need to keep track of the last one to give it extra weighty (to put all extra space after it)
-		ArrayList<ShootingStarsData> starsData = plugin.getStarData();
 		ShootingStarsData lastData = null;
-		for (int i = 0; i < starsData.size(); i++)
+		for (ShootingStarsData starData : starsData)
 		{
-			ShootingStarsData starData = starsData.get(i);
-			// Skip certain worlds based on config
-			if (!isAllowedWorld(starData))
-                continue;
-
 			if (lastData != null)
 				addStar(starsListPanel, lastData);
 			lastData = starData;
@@ -194,26 +127,13 @@ public class ShootingStarsPanel extends PluginPanel
 		revalidate();
 	}
 
-	public void refreshPanels()
+	@Override
+	public void updateList()
 	{
 		for (ShootingStarsSinglePanel starsSinglePanel : starsList)
 		{
 			starsSinglePanel.updateLabels();
 		}
-	}
-
-	public void onActivate()
-	{
-		// If the panel is opened, try to run a get request to populate/refresh the panel.
-		log.debug("Activated");
-		open = true;
-		plugin.hitAPI();
-	}
-
-	public void onDeactivate()
-	{
-		log.debug("Deactivated");
-		open = false;
 	}
 
 }
