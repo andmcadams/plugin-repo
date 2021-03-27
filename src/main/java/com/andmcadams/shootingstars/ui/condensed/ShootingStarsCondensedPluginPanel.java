@@ -28,7 +28,6 @@ import com.andmcadams.shootingstars.ShootingStarsData;
 import com.andmcadams.shootingstars.ShootingStarsLocation;
 import com.andmcadams.shootingstars.ShootingStarsPlugin;
 import com.andmcadams.shootingstars.ui.ShootingStarsPluginPanelBase;
-import com.google.common.collect.Ordering;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -38,6 +37,10 @@ import java.awt.event.MouseEvent;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Comparator;
+import static java.util.Comparator.comparing;
+import static java.util.Comparator.reverseOrder;
+import static java.util.Comparator.naturalOrder;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.function.Function;
@@ -229,7 +232,7 @@ public class ShootingStarsCondensedPluginPanel extends ShootingStarsPluginPanelB
 				case MAX_TIME:
 					return getCompareValue(r1, r2, ShootingStarsTableRow::getMaxTime);
 				case LOCATION:
-					return getCompareValue(r1, r2, ShootingStarsTableRow::getStarLocation);
+					return getCompareValue(r1, r2, row -> row.getStarLocation().getShortName());
 				case TYPE:
 					return getCompareValue(r1, r2, ShootingStarsTableRow::getWorldType);
 				default:
@@ -258,15 +261,14 @@ public class ShootingStarsCondensedPluginPanel extends ShootingStarsPluginPanelB
 		listContainer.repaint();
 	}
 
-	private int getCompareValue(ShootingStarsTableRow row1, ShootingStarsTableRow row2, Function<ShootingStarsTableRow, Comparable> compareByFn)
+	@SuppressWarnings("rawtypes")
+	private int getCompareValue(ShootingStarsTableRow row1, ShootingStarsTableRow row2,
+								Function<ShootingStarsTableRow, Comparable> compareByFn)
 	{
-		Ordering<Comparable> ordering = Ordering.natural();
-		if (!ascendingOrder)
-		{
-			ordering = ordering.reverse();
-		}
-		ordering = ordering.nullsLast();
-		return ordering.compare(compareByFn.apply(row1), compareByFn.apply(row2));
+		Comparator<ShootingStarsTableRow> c = ascendingOrder ?
+			comparing(compareByFn, naturalOrder()) : comparing(compareByFn, reverseOrder());
+		// Always default to ordering by Max time for the second sort pass
+		return c.thenComparing(ShootingStarsTableRow::getMaxTime, naturalOrder()).compare(row1, row2);
 	}
 
 	@Override
