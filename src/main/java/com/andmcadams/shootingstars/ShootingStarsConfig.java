@@ -30,6 +30,7 @@ import net.runelite.client.config.ConfigGroup;
 import net.runelite.client.config.ConfigItem;
 import net.runelite.client.config.ConfigSection;
 import net.runelite.client.config.Range;
+import net.runelite.client.config.Units;
 
 @ConfigGroup(ShootingStarsPlugin.CONFIG_GROUP_KEY)
 public interface ShootingStarsConfig extends Config
@@ -76,15 +77,19 @@ public interface ShootingStarsConfig extends Config
 	@ConfigItem(
 		keyName = SHOOTING_STAR_EXPIRATION_LENGTH,
 		position = 2,
-		name = "Time to show landed stars",
-		description = "How many minutes landed stars should remain listed in the side panel"
+		name = "Show landed stars for",
+		description = "How many minutes landed stars should remain listed in the side panel<br>" +
+			"The default API returns up to 10 minutes of landed stars"
 	)
 	@Range(
-		max = 5
+		max = 60
+	)
+	@Units(
+		value = Units.MINUTES
 	)
 	default int shootingStarExpirationLength()
 	{
-		return 2;
+		return 5;
 	}
 
 	@ConfigItem(
@@ -98,10 +103,21 @@ public interface ShootingStarsConfig extends Config
 		return ShootingStarsPanelType.LARGE_PANELS;
 	}
 
+	@ConfigItem(
+		keyName = "worldHopperEnabled",
+		position = 4,
+		name = "Double click to Hop",
+		description = "Enables double clicking worlds in the side view panels to quick-hop to them"
+	)
+	default boolean isWorldHopperEnabled()
+	{
+		return true;
+	}
+
 	@ConfigSection(
 		name = "World Toggles",
 		description = "Settings to show and hide certain types of worlds from the list of scouted worlds",
-		position = 3
+		position = 5
 	)
 	String toggleSection = "World Toggles";
 

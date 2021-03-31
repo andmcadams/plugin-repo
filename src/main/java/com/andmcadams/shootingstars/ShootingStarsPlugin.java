@@ -422,6 +422,11 @@ public class ShootingStarsPlugin extends Plugin
 	{
 		assert client.isClientThread();
 
+		if (!config.isWorldHopperEnabled())
+		{
+			return;
+		}
+
 		WorldResult worldResult = worldService.getWorlds();
 		if (worldResult == null)
 		{
