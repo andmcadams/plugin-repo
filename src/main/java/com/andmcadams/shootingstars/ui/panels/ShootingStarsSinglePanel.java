@@ -25,10 +25,14 @@
 package com.andmcadams.shootingstars.ui.panels;
 
 import com.andmcadams.shootingstars.ShootingStarsData;
+import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.function.Consumer;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JTextArea;
+import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 import lombok.Getter;
 import net.runelite.client.ui.ColorScheme;
@@ -40,14 +44,16 @@ public class ShootingStarsSinglePanel extends JPanel
 	private static final Color INCOMING = Color.YELLOW;
 	private static final Color LANDED = Color.GREEN;
 
-	private JTextArea nameLabel;
+	private JLabel nameLabel;
 	private JLabel world;
 	private JLabel time;
 
 	@Getter
 	private ShootingStarsData starData;
 
-	public ShootingStarsSinglePanel(ShootingStarsData starData)
+	private Color lastBackground;
+
+	public ShootingStarsSinglePanel(ShootingStarsData starData, Consumer<Integer> onSelect)
 	{
 		super();
 		this.starData = starData;
@@ -56,26 +62,69 @@ public class ShootingStarsSinglePanel extends JPanel
 		setBorder(new EmptyBorder(5, 5, 5, 5));
 		setBackground(ColorScheme.DARKER_GRAY_COLOR);
 
-		JPanel topPanel = new JPanel(new DynamicGridLayout(1, 2, 10, 0));
-		topPanel.setBackground(ColorScheme.DARKER_GRAY_COLOR);
-		nameLabel = new JTextArea();
-		nameLabel.setWrapStyleWord(true);
-		nameLabel.setLineWrap(true);
-		nameLabel.setEditable(false);
-		nameLabel.setOpaque(false);
-		nameLabel.setFocusable(false);
+		JPanel topPanel = new JPanel(new BorderLayout());
+		topPanel.setOpaque(false);
 
 		world = new JLabel("World " + starData.getWorld());
-		nameLabel.setText(starData.getLocation().getName());
+		nameLabel = new JLabel("<html>" + starData.getLocation().getName() + "</html>");
+		nameLabel.setHorizontalAlignment(SwingConstants.LEFT);
+		nameLabel.setBorder(new EmptyBorder(0, 10, 0, 0));
 
-		topPanel.add(world);
-		topPanel.add(nameLabel);
+		topPanel.add(world, BorderLayout.WEST);
+		topPanel.add(nameLabel, BorderLayout.CENTER);
 
 		time = new JLabel();
 
 		updateLabels();
 		add(topPanel);
 		add(time);
+
+		// From WorldHopper/Condensed Stars Panel
+		addMouseListener(new MouseAdapter()
+		{
+			@Override
+			public void mouseClicked(MouseEvent mouseEvent)
+			{
+				if (mouseEvent.getClickCount() == 2)
+				{
+					if (onSelect != null)
+					{
+						onSelect.accept(starData.getWorld());
+					}
+				}
+			}
+
+			@Override
+			public void mousePressed(MouseEvent mouseEvent)
+			{
+				if (mouseEvent.getClickCount() == 2)
+				{
+					setBackground(getBackground().brighter());
+				}
+			}
+
+			@Override
+			public void mouseReleased(MouseEvent mouseEvent)
+			{
+				if (mouseEvent.getClickCount() == 2)
+				{
+					setBackground(getBackground().darker());
+				}
+			}
+
+			@Override
+			public void mouseEntered(MouseEvent mouseEvent)
+			{
+				ShootingStarsSinglePanel.this.lastBackground = getBackground();
+				setBackground(getBackground().brighter());
+			}
+
+			@Override
+			public void mouseExited(MouseEvent mouseEvent)
+			{
+				setBackground(lastBackground);
+			}
+		});
 	}
 
 	private boolean updateLanded()
