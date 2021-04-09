@@ -88,6 +88,40 @@ public class ShootingStarsTableRow extends JPanel
 
 	private Color lastBackground;
 
+	// bubble up events
+	private final MouseAdapter labelMouseListener = new MouseAdapter()
+	{
+		@Override
+		public void mouseClicked(MouseEvent mouseEvent)
+		{
+			dispatchEvent(mouseEvent);
+		}
+
+		@Override
+		public void mousePressed(MouseEvent mouseEvent)
+		{
+			dispatchEvent(mouseEvent);
+		}
+
+		@Override
+		public void mouseReleased(MouseEvent mouseEvent)
+		{
+			dispatchEvent(mouseEvent);
+		}
+
+		@Override
+		public void mouseEntered(MouseEvent mouseEvent)
+		{
+			dispatchEvent(mouseEvent);
+		}
+
+		@Override
+		public void mouseExited(MouseEvent mouseEvent)
+		{
+			dispatchEvent(mouseEvent);
+		}
+	};
+
 	ShootingStarsTableRow(World world, boolean current, Instant minTime, Instant maxTime, ShootingStarsLocation location, Consumer<World> onSelect)
 	{
 		this.world = world;
@@ -341,6 +375,7 @@ public class ShootingStarsTableRow extends JPanel
 		locationField.setFont(FontManager.getRunescapeSmallFont());
 
 		column.add(locationField, BorderLayout.CENTER);
+		column.addMouseListener(labelMouseListener);
 
 		return column;
 	}
@@ -392,6 +427,7 @@ public class ShootingStarsTableRow extends JPanel
 		{
 			column.setToolTipText(act);
 		}
+		column.addMouseListener(labelMouseListener);
 		return column;
 	}
 
