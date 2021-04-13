@@ -44,7 +44,10 @@ import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.ChatMessageType;
 import net.runelite.api.Client;
 import net.runelite.api.GameState;
+import net.runelite.api.coords.WorldPoint;
 import net.runelite.api.events.ChatMessage;
+import net.runelite.api.events.GameObjectDespawned;
+import net.runelite.api.events.GameObjectSpawned;
 import net.runelite.api.events.GameTick;
 import net.runelite.api.widgets.Widget;
 import net.runelite.api.widgets.WidgetInfo;
@@ -248,6 +251,13 @@ public class ShootingStarsPlugin extends Plugin
 		manager.storeEvent(new ShootingStarsData(loc, world, lminTime, lmaxTime));
 		lastWorld = world;
 		lastLoc = loc;
+	}
+
+	private void recordFoundEvent(int world, int x, int y, int tier, boolean isSpawn)
+	{
+		long currentTime = Instant.now().toEpochMilli() / 1000;
+		manager.storeEvent(new ShootingStarsSightingData(world, x, y, tier, currentTime, isSpawn));
+		lastWorld = world;
 	}
 
 	@Subscribe
@@ -528,5 +538,52 @@ public class ShootingStarsPlugin extends Plugin
 		{
 			resetQuickHopper();
 		}
+	}
+
+	private static final int T9_STAR = 41020;
+	private static final int T8_STAR = 41021;
+	private static final int T7_STAR = 41223;
+	private static final int T6_STAR = 41224;
+	private static final int T5_STAR = 41225;
+	private static final int T4_STAR = 41226;
+	private static final int T3_STAR = 41227;
+	private static final int T2_STAR = 41228;
+	private static final int T1_STAR = 41229;
+	private static final int[] starTierObjects = { T1_STAR, T2_STAR, T3_STAR, T4_STAR, T5_STAR, T6_STAR, T7_STAR, T8_STAR, T9_STAR };
+	@Subscribe
+	public void onGameObjectSpawned(GameObjectSpawned gameObjectSpawned)
+	{
+		int objId = gameObjectSpawned.getGameObject().getId();
+		// This grabs some bad objects, but it at least reduces how many times we run a lin search
+		if (objId < T9_STAR || objId > T1_STAR)
+			return;
+		WorldPoint w = gameObjectSpawned.getGameObject().getWorldLocation();
+		int ind = -1;
+		log.info("Spawned star with id " + objId);
+		for (int i = 0; i < starTierObjects.length; i++)
+		{
+			if (starTierObjects[i] == objId)
+			{
+				ind = i + 1;
+				break;
+			}
+		}
+		if (ind == -1)
+			return;
+		// Record a star of tier ind
+		int world = client.getWorld();
+		recordFoundEvent(world, w.getX(), w.getY(), ind, true);
+	}
+
+	@Subscribe
+	public void onGameObjectDespawned(GameObjectDespawned gameObjectDespawned)
+	{
+		int objId = gameObjectDespawned.getGameObject().getId();
+		if (objId != T1_STAR)
+			return;
+		int world = client.getWorld();
+		WorldPoint w = gameObjectDespawned.getGameObject().getWorldLocation();
+		// Record a star of tier ind despawning
+		recordFoundEvent(world, w.getX(), w.getY(), 0, false);
 	}
 }
