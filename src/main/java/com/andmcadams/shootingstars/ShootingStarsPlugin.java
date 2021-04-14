@@ -25,12 +25,15 @@
 package com.andmcadams.shootingstars;
 
 import com.andmcadams.shootingstars.ui.ShootingStarsPluginPanelBase;
+import com.google.common.collect.ImmutableMap;
 import com.google.inject.Provides;
 import java.awt.image.BufferedImage;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.regex.Matcher;
@@ -550,39 +553,41 @@ public class ShootingStarsPlugin extends Plugin
 	private static final int T2_STAR = 41228;
 	private static final int T1_STAR = 41229;
 	private static final int[] starTierObjects = { T1_STAR, T2_STAR, T3_STAR, T4_STAR, T5_STAR, T6_STAR, T7_STAR, T8_STAR, T9_STAR };
+	private static final Map<Integer, Integer> TIER_MAP = new ImmutableMap.Builder<Integer, Integer>()
+		.put(T1_STAR, 1)
+		.put(T2_STAR, 2)
+		.put(T3_STAR, 3)
+		.put(T4_STAR, 4)
+		.put(T5_STAR, 5)
+		.put(T6_STAR, 6)
+		.put(T7_STAR, 7)
+		.put(T8_STAR, 8)
+		.put(T9_STAR, 9)
+		.build();
+
 	@Subscribe
 	public void onGameObjectSpawned(GameObjectSpawned gameObjectSpawned)
 	{
 		int objId = gameObjectSpawned.getGameObject().getId();
-		// This grabs some bad objects, but it at least reduces how many times we run a lin search
-		if (objId < T9_STAR || objId > T1_STAR)
+		if (!TIER_MAP.containsKey(objId))
 			return;
+
 		WorldPoint w = gameObjectSpawned.getGameObject().getWorldLocation();
-		int ind = -1;
-		log.info("Spawned star with id " + objId);
-		for (int i = 0; i < starTierObjects.length; i++)
-		{
-			if (starTierObjects[i] == objId)
-			{
-				ind = i + 1;
-				break;
-			}
-		}
-		if (ind == -1)
-			return;
-		// Record a star of tier ind
+		int tier = TIER_MAP.get(objId);
 		int world = client.getWorld();
-		recordFoundEvent(world, w.getX(), w.getY(), ind, true);
+
+		// Record a star of tier ind
+		recordFoundEvent(world, w.getX(), w.getY(), tier, true);
 	}
 
 	@Subscribe
 	public void onGameObjectDespawned(GameObjectDespawned gameObjectDespawned)
 	{
 		int objId = gameObjectDespawned.getGameObject().getId();
-		if (objId != T1_STAR)
+		if (TIER_MAP.get(objId) != 1)
 			return;
-		int world = client.getWorld();
 		WorldPoint w = gameObjectDespawned.getGameObject().getWorldLocation();
+		int world = client.getWorld();
 		// Record a star of tier ind despawning
 		recordFoundEvent(world, w.getX(), w.getY(), 0, false);
 	}
