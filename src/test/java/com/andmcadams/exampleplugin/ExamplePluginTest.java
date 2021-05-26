@@ -1,13 +1,13 @@
-package com.andmcadams.shootingstars;
+package com.andmcadams.exampleplugin;
 
 import net.runelite.client.RuneLite;
 import net.runelite.client.externalplugins.ExternalPluginManager;
 
-public class ShootingStarsPluginTest
+public class ExamplePluginTest
 {
 	public static void main(String[] args) throws Exception
 	{
-		ExternalPluginManager.loadBuiltin(ShootingStarsPlugin.class);
+		ExternalPluginManager.loadBuiltin(ExamplePlugin.class);
 		RuneLite.main(args);
 	}
 }
