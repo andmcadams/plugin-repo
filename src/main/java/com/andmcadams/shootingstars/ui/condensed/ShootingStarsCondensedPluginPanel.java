@@ -306,7 +306,7 @@ public class ShootingStarsCondensedPluginPanel extends ShootingStarsPluginPanelB
 		if (row.getStarLocation() == ShootingStarsLocation.WILDERNESS
 			|| types.contains(WorldType.PVP)
 			|| types.contains(WorldType.DEADMAN)
-			|| types.contains(WorldType.DEADMAN_TOURNAMENT))
+			|| types.contains(WorldType.TOURNAMENT))
 		{
 			c = new Color(
 				c.getRed(),
