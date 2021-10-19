@@ -90,9 +90,14 @@ public class ShootingStarsDataManager
 		for (JsonElement jsonElement : j)
 		{
 			JsonObject jObj = jsonElement.getAsJsonObject();
-			ShootingStarsData d = new ShootingStarsData(ShootingStarsLocation.getLocation(jObj.get("location").getAsInt()),
-				jObj.get("world").getAsInt(), jObj.get("minTime").getAsLong(), jObj.get("maxTime").getAsLong());
-			l.add(d);
+			try
+			{
+				ShootingStarsData d = new ShootingStarsData(ShootingStarsLocation.getLocation(jObj.get("location").getAsInt()),
+						jObj.get("world").getAsInt(), jObj.get("minTime").getAsLong(), jObj.get("maxTime").getAsLong());
+				l.add(d);
+			} catch (UnsupportedOperationException uos) {
+				log.error("Star: " + uos.getLocalizedMessage());
+			}
 		}
 		return l;
 	}
