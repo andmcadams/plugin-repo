@@ -392,6 +392,11 @@ public class ShootingStarsPlugin extends Plugin
 			return false;
 		}
 
+		// Disallow Skill Total worlds from being displayed (depending on config)
+		if (!config.shootingStarShowSkillTotalWorlds() && world.getTypes().contains(WorldType.SKILL_TOTAL))
+		{
+			return false;
+		}
 		// Disallow various landing sites (depending on config)
 		return starData.getLocation().getConfigFunction().apply(config);
 	}
