@@ -55,6 +55,7 @@ public interface ShootingStarsConfig extends Config
 	String SHOOTING_STAR_SHOW_PISCATORIS_KEYNAME = "piscatoris";
 	String SHOOTING_STAR_SHOW_TIRANNWN_KEYNAME = "tirannwn";
 	String SHOOTING_STAR_SHOW_WILDERNESS_KEYNAME = "wilderness";
+	String SHOOTING_STAR_SHOW_SKILL_TOTAL_KEYNAME = "skill total";
 
 	@ConfigItem(keyName = SHOOTING_STAR_POST_ENDPOINT_KEYNAME, position = 0, name = "POST endpoint", description = "Web endpoint to post star data to")
 	default String shootingStarPostEndpointConfig()
@@ -133,9 +134,22 @@ public interface ShootingStarsConfig extends Config
 		return false;
 	}
 
+
+	@ConfigItem(
+			keyName = SHOOTING_STAR_SHOW_SKILL_TOTAL_KEYNAME,
+			position = 4,
+			name = "Skill Total worlds",
+			description = "Show scouted Skill Total worlds",
+			section = toggleSection
+	)
+	default boolean shootingStarShowSkillTotalWorlds()
+	{
+		return false;
+	}
+
 	@ConfigItem(
 		keyName = SHOOTING_STAR_SHOW_WILDERNESS_KEYNAME,
-		position = 4,
+		position = 5,
 		name = "Wilderness",
 		description = "Show scouted Wilderness worlds",
 		section = toggleSection
@@ -147,7 +161,7 @@ public interface ShootingStarsConfig extends Config
 
 	@ConfigItem(
 		keyName = SHOOTING_STAR_SHOW_ASGARNIA_KEYNAME,
-		position = 5,
+		position = 6,
 		name = "Asgarnia",
 		description = "Show scouted Asgarnia worlds",
 		section = toggleSection
@@ -159,7 +173,7 @@ public interface ShootingStarsConfig extends Config
 
 	@ConfigItem(
 		keyName = SHOOTING_STAR_SHOW_KARAMJA_KEYNAME,
-		position = 6,
+		position = 7,
 		name = "Crandor and Karamja",
 		description = "Show scouted Crandor and Karamja worlds",
 		section = toggleSection
@@ -171,7 +185,7 @@ public interface ShootingStarsConfig extends Config
 
 	@ConfigItem(
 		keyName = SHOOTING_STAR_SHOW_FELDIP_HILLS_KEYNAME,
-		position = 7,
+		position = 8,
 		name = "Feldip Hills and Isle of Souls",
 		description = "Show scouted Feldip Hills and Isle of Souls worlds",
 		section = toggleSection
@@ -183,7 +197,7 @@ public interface ShootingStarsConfig extends Config
 
 	@ConfigItem(
 		keyName = SHOOTING_STAR_SHOW_FOSSIL_ISLAND_KEYNAME,
-		position = 8,
+		position = 9,
 		name = "Fossil Island and Mos Le'Harmless",
 		description = "Show scouted Fossil Island and Mos Le'Harmless worlds",
 		section = toggleSection
@@ -195,7 +209,7 @@ public interface ShootingStarsConfig extends Config
 
 	@ConfigItem(
 		keyName = SHOOTING_STAR_SHOW_FREMENNIK_KEYNAME,
-		position = 9,
+		position = 10,
 		name = "Fremennik Lands and Lunar Isle",
 		description = "Show scouted Fremennik Lands and Lunar Isle worlds",
 		section = toggleSection
@@ -207,7 +221,7 @@ public interface ShootingStarsConfig extends Config
 
 	@ConfigItem(
 		keyName = SHOOTING_STAR_SHOW_KOUREND_KEYNAME,
-		position = 10,
+		position = 11,
 		name = "Great Kourend",
 		description = "Show scouted Great Kourend worlds",
 		section = toggleSection
@@ -219,7 +233,7 @@ public interface ShootingStarsConfig extends Config
 
 	@ConfigItem(
 		keyName = SHOOTING_STAR_SHOW_KANDARIN_KEYNAME,
-		position = 11,
+		position = 12,
 		name = "Kandarin",
 		description = "Show scouted Kandarin worlds",
 		section = toggleSection
@@ -231,7 +245,7 @@ public interface ShootingStarsConfig extends Config
 
 	@ConfigItem(
 		keyName = SHOOTING_STAR_SHOW_KEBOS_KEYNAME,
-		position = 12,
+		position = 13,
 		name = "Kebos Lowlands",
 		description = "Show scouted Kebos Lowlands worlds",
 		section = toggleSection
@@ -243,7 +257,7 @@ public interface ShootingStarsConfig extends Config
 
 	@ConfigItem(
 		keyName = SHOOTING_STAR_SHOW_KHARIDIAN_DESERT_KEYNAME,
-		position = 13,
+		position = 14,
 		name = "Kharidian Desert",
 		description = "Show scouted Kharidian Desert worlds",
 		section = toggleSection
@@ -255,7 +269,7 @@ public interface ShootingStarsConfig extends Config
 
 	@ConfigItem(
 		keyName = SHOOTING_STAR_SHOW_MISTHALIN_KEYNAME,
-		position = 14,
+		position = 15,
 		name = "Misthalin",
 		description = "Show scouted Misthalin worlds",
 		section = toggleSection
@@ -267,7 +281,7 @@ public interface ShootingStarsConfig extends Config
 
 	@ConfigItem(
 		keyName = SHOOTING_STAR_SHOW_MORYTANIA_KEYNAME,
-		position = 15,
+		position = 16,
 		name = "Morytania",
 		description = "Show scouted Morytania worlds",
 		section = toggleSection
@@ -279,7 +293,7 @@ public interface ShootingStarsConfig extends Config
 
 	@ConfigItem(
 		keyName = SHOOTING_STAR_SHOW_PISCATORIS_KEYNAME,
-		position = 16,
+		position = 17,
 		name = "Piscatoris and the Gnome Stronghold",
 		description = "Show scouted Piscatoris and Gnome Stronghold worlds",
 		section = toggleSection
@@ -291,7 +305,7 @@ public interface ShootingStarsConfig extends Config
 
 	@ConfigItem(
 		keyName = SHOOTING_STAR_SHOW_TIRANNWN_KEYNAME,
-		position = 17,
+		position = 18,
 		name = "Tirannwn",
 		description = "Show scouted Tirannwn worlds",
 		section = toggleSection
