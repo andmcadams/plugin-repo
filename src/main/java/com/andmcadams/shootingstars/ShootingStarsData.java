@@ -33,7 +33,7 @@ import lombok.Getter;
 public class ShootingStarsData
 {
 	@Getter
-	private final int loc;
+	private final int location;
 
 	@Getter
 	private final int world;
@@ -48,15 +48,15 @@ public class ShootingStarsData
 
 	public ShootingStarsData(ShootingStarsLocation loc, int world, long minTime, long maxTime)
 	{
-		this.loc = loc.getId();
+		this.location = loc.getId();
 		this.world = world;
 		this.minTime = minTime;
 		this.maxTime = maxTime;
 	}
 
-	public ShootingStarsLocation getLocation()
+	public ShootingStarsLocation getShootingStarsLocation()
 	{
-		return ShootingStarsLocation.getLocation(this.loc);
+		return ShootingStarsLocation.getLocation(this.location);
 	}
 
 	public boolean hasLanded()

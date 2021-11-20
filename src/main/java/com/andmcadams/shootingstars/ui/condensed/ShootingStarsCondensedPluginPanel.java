@@ -293,7 +293,7 @@ public class ShootingStarsCondensedPluginPanel extends ShootingStarsPluginPanelB
 			world, current,
 			Instant.ofEpochSecond(star.getMinTime()),
 			Instant.ofEpochSecond(star.getMaxTime()),
-			star.getLocation(), plugin::hopTo);
+			star.getShootingStarsLocation(), plugin::hopTo);
 
 		setColorOnRow(row, stripe);
 		return row;

@@ -188,7 +188,9 @@ public class ShootingStarsPlugin extends Plugin
 	public void onConfigChanged(ConfigChanged event)
 	{
 		if (!event.getGroup().equals(CONFIG_GROUP_KEY))
+		{
 			return;
+		}
 		switch (event.getKey())
 		{
 			case ShootingStarsConfig.SHOOTING_STAR_POST_ENDPOINT_KEYNAME:
@@ -398,7 +400,7 @@ public class ShootingStarsPlugin extends Plugin
 			return false;
 		}
 		// Disallow various landing sites (depending on config)
-		return starData.getLocation().getConfigFunction().apply(config);
+		return starData.getShootingStarsLocation().getConfigFunction().apply(config);
 	}
 
 	/*

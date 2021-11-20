@@ -66,7 +66,7 @@ public class ShootingStarsSinglePanel extends JPanel
 		topPanel.setOpaque(false);
 
 		world = new JLabel("World " + starData.getWorld());
-		nameLabel = new JLabel("<html>" + starData.getLocation().getName() + "</html>");
+		nameLabel = new JLabel("<html>" + starData.getShootingStarsLocation().getName() + "</html>");
 		nameLabel.setHorizontalAlignment(SwingConstants.LEFT);
 		nameLabel.setBorder(new EmptyBorder(0, 10, 0, 0));
 
