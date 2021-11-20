@@ -136,20 +136,8 @@ public interface ShootingStarsConfig extends Config
 
 
 	@ConfigItem(
-			keyName = SHOOTING_STAR_SHOW_SKILL_TOTAL_KEYNAME,
-			position = 4,
-			name = "Skill Total worlds",
-			description = "Show scouted Skill Total worlds",
-			section = toggleSection
-	)
-	default boolean shootingStarShowSkillTotalWorlds()
-	{
-		return false;
-	}
-
-	@ConfigItem(
 		keyName = SHOOTING_STAR_SHOW_WILDERNESS_KEYNAME,
-		position = 5,
+		position = 4,
 		name = "Wilderness",
 		description = "Show scouted Wilderness worlds",
 		section = toggleSection
@@ -157,6 +145,18 @@ public interface ShootingStarsConfig extends Config
 	default boolean shootingStarShowWildernessWorlds()
 	{
 		return false;
+	}
+
+	@ConfigItem(
+		keyName = SHOOTING_STAR_SHOW_SKILL_TOTAL_KEYNAME,
+		position = 5,
+		name = "Skill Total worlds",
+		description = "Show scouted Skill Total worlds",
+		section = toggleSection
+	)
+	default boolean shootingStarShowSkillTotalWorlds()
+	{
+		return true;
 	}
 
 	@ConfigItem(
