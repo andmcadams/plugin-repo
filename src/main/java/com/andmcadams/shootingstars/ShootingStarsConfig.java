@@ -101,7 +101,7 @@ public interface ShootingStarsConfig extends Config
 	)
 	default ShootingStarsPanelType shootingStarsPanelType()
 	{
-		return ShootingStarsPanelType.LARGE_PANELS;
+		return ShootingStarsPanelType.CONDENSED;
 	}
 
 	@ConfigItem(
