@@ -204,6 +204,7 @@ public class ShootingStarsPlugin extends Plugin
 			case ShootingStarsConfig.SHOOTING_STAR_SHARED_KEY_KEYNAME:
 				shootingStarsSharedKey = config.shootingStarSharedKeyConfig();
 				keyError = isInvalidKey(shootingStarsSharedKey);
+				canRefresh = true;
 				break;
 			case ShootingStarsConfig.SHOOTING_STAR_PANEL_CLASS:
 				loadPluginPanel();
