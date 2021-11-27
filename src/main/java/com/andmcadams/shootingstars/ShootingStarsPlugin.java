@@ -400,6 +400,13 @@ public class ShootingStarsPlugin extends Plugin
 		{
 			return false;
 		}
+
+		// Disallow non-members worlds from showing up
+		if (!world.getTypes().contains(WorldType.MEMBERS))
+		{
+			return false;
+		}
+
 		// Disallow various landing sites (depending on config)
 		return starData.getShootingStarsLocation().getConfigFunction().apply(config);
 	}
