@@ -6,7 +6,7 @@ The following information is sent to the server when you have looked through a t
 * Minimum and maximum time for the star to land
 * Keyword used to store your data
 
-The default server does not encrypt any of your data.
+The default server ([here](https://github.com/andmcadams/shooting-stars-server)) does not encrypt any of your data.
 
 Please keep in mind that I work on this and host a default endpoint for fun. I have other obligations outside of this,
 and while I do work on it from time to time, this is not what I spend all my time on. With that in mind, please be
@@ -24,14 +24,14 @@ The server side of this plugin (which holds and reports back all of your data) n
 send the results back to. This is similar to how any website works. In addition, IPs may get saved in logs in order to
 reduce spam and log errors. With the minimal amount of data I get, it would be very hard to associate an IP address with
 a particular account/person. I will not use any logged IP addresses for nefarious purposes, but I cannot say the same
-for any other endpoints you connect to.
+for any other people whose endpoints you connect to.
 
-I will not change this wording unless the RuneLite devs agree to whatever the new text is.
+I will not change this warning's wording unless the RuneLite devs agree to whatever the new text is.
 If you clone this repo and create a similar plugin, it is very likely
 that you will need a similar warning, depending on their current policies.
 
 If you do not feel comfortable with that, I highly recommend using one of the other shooting
-star plugins that store data locally or dump it for you to copy and paste.
+star plugins that stores data locally or dump it for you to copy and paste.
 If you're feeling really ambitious, you can always clone the server code and spin up your own server!
 The use of an external server is not necessary, but it does make things more seamless.
 
