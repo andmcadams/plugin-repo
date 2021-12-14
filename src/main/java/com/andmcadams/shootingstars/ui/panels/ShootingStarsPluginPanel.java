@@ -92,6 +92,7 @@ public class ShootingStarsPluginPanel extends ShootingStarsPluginPanelBase
 	public void addStar(JPanel shootingStarsPanel, ShootingStarsData data)
 	{
 		ShootingStarsSinglePanel starsSinglePanel = new ShootingStarsSinglePanel(data, plugin::hopTo);
+		starsSinglePanel.createRightClickMenu(this);
 		shootingStarsPanel.add(starsSinglePanel, c);
 		c.gridy += 1;
 		starsList.add(starsSinglePanel);

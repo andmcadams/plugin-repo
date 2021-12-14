@@ -25,18 +25,22 @@
 package com.andmcadams.shootingstars.ui.panels;
 
 import com.andmcadams.shootingstars.ShootingStarsData;
+import com.andmcadams.shootingstars.ui.condensed.ShootingStarsCondensedPluginPanel;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.function.Consumer;
 import javax.swing.JLabel;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 import lombok.Getter;
 import net.runelite.client.ui.ColorScheme;
 import net.runelite.client.ui.DynamicGridLayout;
+import net.runelite.client.ui.FontManager;
 
 public class ShootingStarsSinglePanel extends JPanel
 {
@@ -150,5 +154,17 @@ public class ShootingStarsSinglePanel extends JPanel
 		updateTime();
 		repaint();
 		revalidate();
+	}
+
+	public void createRightClickMenu(ShootingStarsPluginPanel panel)
+	{
+		JPopupMenu rightClickMenu = new JPopupMenu();
+		rightClickMenu.setBorder(new EmptyBorder(1, 1, 1, 1));
+		JMenuItem removeEntryOption = new JMenuItem();
+		removeEntryOption.setText("Hide for this wave");
+		removeEntryOption.setFont(FontManager.getRunescapeSmallFont());
+		removeEntryOption.addActionListener(e -> panel.hideWorld(this.starData.getWorld(), this.starData.getMaxTime()));
+		rightClickMenu.add(removeEntryOption);
+		this.setComponentPopupMenu(rightClickMenu);
 	}
 }

@@ -35,7 +35,9 @@ import java.time.Instant;
 import java.util.EnumSet;
 import java.util.function.Consumer;
 import javax.swing.JLabel;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 import lombok.AllArgsConstructor;
@@ -434,6 +436,18 @@ public class ShootingStarsTableRow extends JPanel
 		}
 		column.addMouseListener(labelMouseListener);
 		return column;
+	}
+
+	public void createRightClickMenu(ShootingStarsCondensedPluginPanel panel)
+	{
+        JPopupMenu rightClickMenu = new JPopupMenu();
+		rightClickMenu.setBorder(new EmptyBorder(1, 1, 1, 1));
+        JMenuItem removeEntryOption = new JMenuItem();
+        removeEntryOption.setText("Hide for this wave");
+        removeEntryOption.setFont(FontManager.getRunescapeSmallFont());
+        removeEntryOption.addActionListener(e -> panel.hideWorld(this.world.getId(), this.maxTime.getEpochSecond()));
+		rightClickMenu.add(removeEntryOption);
+		this.setComponentPopupMenu(rightClickMenu);
 	}
 
 	public String getWorldType()

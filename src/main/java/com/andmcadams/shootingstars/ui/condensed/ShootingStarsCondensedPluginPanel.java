@@ -295,6 +295,9 @@ public class ShootingStarsCondensedPluginPanel extends ShootingStarsPluginPanelB
 			Instant.ofEpochSecond(star.getMaxTime()),
 			star.getShootingStarsLocation(), plugin::hopTo);
 
+		// Create a right click menu that can hide the world
+		row.createRightClickMenu(this);
+
 		setColorOnRow(row, stripe);
 		return row;
 	}
