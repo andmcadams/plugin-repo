@@ -26,10 +26,8 @@ package com.andmcadams.shootingstars.ui;
 
 import com.andmcadams.shootingstars.ShootingStarsData;
 import com.andmcadams.shootingstars.ShootingStarsPlugin;
-import java.util.HashMap;
 import java.util.List;
 import lombok.Getter;
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.client.ui.PluginPanel;
 
