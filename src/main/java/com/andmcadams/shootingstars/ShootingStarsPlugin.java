@@ -31,6 +31,7 @@ import java.time.Duration;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.regex.Matcher;
@@ -128,6 +129,9 @@ public class ShootingStarsPlugin extends Plugin
 	@Getter
 	@Setter
 	private ArrayList<ShootingStarsData> starData = new ArrayList<>();
+
+	// Map of World => MaxTime so that we can hide stars for that World with max time < MaxTime (hide this wave's stars)
+	private final HashMap<Integer, Long> hiddenWorlds = new HashMap<>();
 
 	@Getter
 	@Setter
@@ -389,6 +393,12 @@ public class ShootingStarsPlugin extends Plugin
 			return false;
 		}
 
+		// Disallow hidden stars from being displayed
+		if (isWorldHidden(starData))
+		{
+			return false;
+		}
+
 		// Disallow PVP worlds from being displayed (depending on config)
 		if (!config.shootingStarShowPvpWorlds() && world.getTypes().contains(WorldType.PVP))
 		{
@@ -543,5 +553,16 @@ public class ShootingStarsPlugin extends Plugin
 		{
 			resetQuickHopper();
 		}
+	}
+
+	public void hideWorld(int world, long maxTime)
+	{
+		hiddenWorlds.put(world, maxTime);
+		updatePanelList();
+	}
+
+	public boolean isWorldHidden(ShootingStarsData data)
+	{
+		return hiddenWorlds.containsKey(data.getWorld()) && hiddenWorlds.get(data.getWorld()) >= data.getMaxTime();
 	}
 }
