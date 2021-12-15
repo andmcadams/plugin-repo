@@ -565,4 +565,10 @@ public class ShootingStarsPlugin extends Plugin
 	{
 		return hiddenWorlds.containsKey(data.getWorld()) && hiddenWorlds.get(data.getWorld()) >= data.getMaxTime();
 	}
+
+	public void resetHiddenWorlds()
+	{
+		hiddenWorlds.clear();
+		updatePanelList();
+	}
 }

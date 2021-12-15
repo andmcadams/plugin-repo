@@ -71,4 +71,9 @@ public abstract class ShootingStarsPluginPanelBase extends PluginPanel
 	{
 		plugin.hideWorld(world, maxTime);
 	}
+
+	public void resetHiddenWorlds()
+	{
+		plugin.resetHiddenWorlds();
+	}
 }

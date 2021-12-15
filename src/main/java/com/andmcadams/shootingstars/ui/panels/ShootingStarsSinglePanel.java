@@ -164,7 +164,16 @@ public class ShootingStarsSinglePanel extends JPanel
 		removeEntryOption.setText("Hide for this wave");
 		removeEntryOption.setFont(FontManager.getRunescapeSmallFont());
 		removeEntryOption.addActionListener(e -> panel.hideWorld(this.starData.getWorld(), this.starData.getMaxTime()));
+		removeEntryOption.setBorder(new EmptyBorder(5, 0, 5, 0));
+
+		JMenuItem resetHiddenWorldsOptions = new JMenuItem();
+		resetHiddenWorldsOptions.setText("Unhide all worlds");
+		resetHiddenWorldsOptions.setFont(FontManager.getRunescapeSmallFont());
+		resetHiddenWorldsOptions.addActionListener(e -> panel.resetHiddenWorlds());
+		resetHiddenWorldsOptions.setBorder(new EmptyBorder(5, 0, 5, 0));
+
 		rightClickMenu.add(removeEntryOption);
+		rightClickMenu.add(resetHiddenWorldsOptions);
 		this.setComponentPopupMenu(rightClickMenu);
 	}
 }
