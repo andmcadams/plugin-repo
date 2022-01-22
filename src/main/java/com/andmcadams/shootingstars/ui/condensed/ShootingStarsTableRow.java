@@ -457,6 +457,10 @@ public class ShootingStarsTableRow extends JPanel
 		rightClickMenu.add(removeEntryOption);
 		rightClickMenu.add(resetHiddenWorldsOptions);
 		this.setComponentPopupMenu(rightClickMenu);
+		// Yeah, this isn't great but honestly I'm not sure why these two in particular aren't covered by setting the
+		// parent's component popup menu.
+		((JPanel)locationField.getParent()).setComponentPopupMenu(rightClickMenu);
+		((JPanel)worldTypeField.getParent()).setComponentPopupMenu(rightClickMenu);
 	}
 
 	public String getWorldType()
