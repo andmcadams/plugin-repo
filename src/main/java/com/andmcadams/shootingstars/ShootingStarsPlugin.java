@@ -411,6 +411,18 @@ public class ShootingStarsPlugin extends Plugin
 			return false;
 		}
 
+		// Disallow Leagues worlds from being displayed (depending on config)
+		if (!config.shootingStarShowLeaguesWorlds() && world.getTypes().contains(WorldType.SEASONAL))
+		{
+			return false;
+		}
+
+		// Disallow non Leagues worlds from being displayed (depending on config)
+		if (!config.shootingStarShowMainWorlds() && !world.getTypes().contains(WorldType.SEASONAL))
+		{
+			return false;
+		}
+
 		// Disallow non-members worlds from showing up
 		if (!world.getTypes().contains(WorldType.MEMBERS))
 		{
