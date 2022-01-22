@@ -139,7 +139,7 @@ public class ShootingStarsTableRow extends JPanel
 			@Override
 			public void mouseClicked(MouseEvent mouseEvent)
 			{
-				if (mouseEvent.getClickCount() == 2)
+				if (mouseEvent.getButton() == MouseEvent.BUTTON1 && mouseEvent.getClickCount() == 2)
 				{
 					if (onSelect != null)
 					{
