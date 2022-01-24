@@ -23,7 +23,7 @@ dependencies {
 }
 
 group = 'com.andmcadams.shootingstars'
-version = '1.5.1'
+version = '1.6'
 sourceCompatibility = '1.8'
 
 tasks.withType(JavaCompile) {
