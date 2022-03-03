@@ -85,7 +85,7 @@ public interface ShootingStarsConfig extends Config
 			"Different APIs may return less than the maximum of 60 minutes"
 	)
 	@Range(
-		max = 60
+		max = 90
 	)
 	@Units(
 		value = Units.MINUTES
