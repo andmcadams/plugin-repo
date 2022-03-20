@@ -55,7 +55,6 @@ import net.runelite.client.chat.ChatMessageBuilder;
 import net.runelite.client.chat.ChatMessageManager;
 import net.runelite.client.chat.QueuedMessage;
 import net.runelite.client.config.ConfigManager;
-import net.runelite.client.config.RuneScapeProfileType;
 import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.events.ConfigChanged;
 import net.runelite.client.game.WorldService;
@@ -215,10 +214,6 @@ public class ShootingStarsPlugin extends Plugin
 				loadPluginPanel();
 				updatePanelList();
 				break;
-			case ShootingStarsConfig.SHOOTING_STAR_SHOW_LEAGUES_WORLDS_KEYNAME:
-				// Reset these in case someone tried to submit a leagues world, couldn't and then toggled this setting.
-				lastWorld = -1;
-				lastLoc = null;
 			default:
 				updatePanelList();
 				break;
@@ -257,26 +252,7 @@ public class ShootingStarsPlugin extends Plugin
 		long currentTime = Instant.now().toEpochMilli();
 		long lminTime = currentTime / 1000 + (minTime * 60);
 		long lmaxTime = currentTime / 1000 + (maxTime * 60) + MAX_TIME_ADJ;
-
-		// We only want to store Leagues worlds if given permission.
-		if (RuneScapeProfileType.getCurrent(client) != RuneScapeProfileType.SHATTERED_RELICS_LEAGUE || config.shootingStarShowLeaguesWorlds())
-		{
-			manager.storeEvent(new ShootingStarsData(loc, world, lminTime, lmaxTime));
-		}
-		else
-		{
-			// Print a message if trying to store a Leagues world without permission.
-			String chatMessage = new ChatMessageBuilder()
-				.append(ChatColorType.HIGHLIGHT)
-				.append("Cannot submit a Leagues world without toggling it on in settings. Please set Leagues worlds to on.")
-				.build();
-			chatMessageManager
-				.queue(QueuedMessage.builder()
-					.type(ChatMessageType.CONSOLE)
-					.runeLiteFormattedMessage(chatMessage)
-					.build());
-		}
-		// This needs to be done to avoid onTick hitting this every time. These should be reset on config change.
+		manager.storeEvent(new ShootingStarsData(loc, world, lminTime, lmaxTime));
 		lastWorld = world;
 		lastLoc = loc;
 	}
@@ -431,18 +407,6 @@ public class ShootingStarsPlugin extends Plugin
 
 		// Disallow Skill Total worlds from being displayed (depending on config)
 		if (!config.shootingStarShowSkillTotalWorlds() && world.getTypes().contains(WorldType.SKILL_TOTAL))
-		{
-			return false;
-		}
-
-		// Disallow Leagues worlds from being displayed (depending on config)
-		if (!config.shootingStarShowLeaguesWorlds() && world.getTypes().contains(WorldType.SEASONAL))
-		{
-			return false;
-		}
-
-		// Disallow non Leagues worlds from being displayed (depending on config)
-		if (!config.shootingStarShowMainWorlds() && !world.getTypes().contains(WorldType.SEASONAL))
 		{
 			return false;
 		}

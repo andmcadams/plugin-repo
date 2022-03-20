@@ -411,7 +411,7 @@ public class ShootingStarsTableRow extends JPanel
 		}
 		if (types.contains(WorldType.SEASONAL))
 		{
-			sb.append("L");
+			sb.append("S");
 		}
 		if (types.contains(WorldType.HIGH_RISK))
 		{

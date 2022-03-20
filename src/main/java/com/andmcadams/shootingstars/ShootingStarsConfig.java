@@ -40,8 +40,6 @@ public interface ShootingStarsConfig extends Config
 	String SHOOTING_STAR_SHARED_KEY_KEYNAME = "password";
 	String SHOOTING_STAR_EXPIRATION_LENGTH = "expiration";
 	String SHOOTING_STAR_PANEL_CLASS = "panelclass";
-	String SHOOTING_STAR_SHOW_MAIN_WORLDS_KEYNAME = "main worlds";
-	String SHOOTING_STAR_SHOW_LEAGUES_WORLDS_KEYNAME = "leagues worlds";
 	String SHOOTING_STAR_SHOW_PVP_WORLDS_KEYNAME = "pvp worlds";
 	String SHOOTING_STAR_SHOW_ASGARNIA_KEYNAME = "asgarnia";
 	String SHOOTING_STAR_SHOW_KARAMJA_KEYNAME = "karamja";
@@ -123,30 +121,6 @@ public interface ShootingStarsConfig extends Config
 		position = 5
 	)
 	String toggleSection = "World Toggles";
-
-	@ConfigItem(
-		keyName = SHOOTING_STAR_SHOW_MAIN_WORLDS_KEYNAME,
-		position = 1,
-		name = "Main game worlds",
-		description = "Show scouted main worlds",
-		section = toggleSection
-	)
-	default boolean shootingStarShowMainWorlds()
-	{
-		return true;
-	}
-
-	@ConfigItem(
-		keyName = SHOOTING_STAR_SHOW_LEAGUES_WORLDS_KEYNAME,
-		position = 2,
-		name = "Leagues worlds",
-		description = "Show scouted Leagues worlds. This must be enabled in order to submit Leagues worlds as well.",
-		section = toggleSection
-	)
-	default boolean shootingStarShowLeaguesWorlds()
-	{
-		return false;
-	}
 
 	@ConfigItem(
 		keyName = SHOOTING_STAR_SHOW_PVP_WORLDS_KEYNAME,
