@@ -80,10 +80,10 @@ public interface ShootingStarsConfig extends Config
 		position = 2,
 		name = "Show landed stars for",
 		description = "How many minutes landed stars should remain listed in the side panel<br>" +
-			"Different APIs may return less than the maximum of 60 minutes"
+			"Different APIs may return less than the maximum of 120 minutes"
 	)
 	@Range(
-		max = 60
+		max = 120
 	)
 	@Units(
 		value = Units.MINUTES
