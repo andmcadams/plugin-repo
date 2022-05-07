@@ -56,6 +56,7 @@ public interface ShootingStarsConfig extends Config
 	String SHOOTING_STAR_SHOW_TIRANNWN_KEYNAME = "tirannwn";
 	String SHOOTING_STAR_SHOW_WILDERNESS_KEYNAME = "wilderness";
 	String SHOOTING_STAR_SHOW_SKILL_TOTAL_KEYNAME = "skill total";
+	String SHOOTING_STAR_SHOW_SIDEBAR_ICON = "sidebar icon";
 
 	@ConfigItem(keyName = SHOOTING_STAR_POST_ENDPOINT_KEYNAME, position = 0, name = "POST endpoint", description = "Web endpoint to post star data to")
 	default String shootingStarPostEndpointConfig()
@@ -311,6 +312,16 @@ public interface ShootingStarsConfig extends Config
 	)
 	default boolean shootingStarShowTirannwnWorlds()
 	{
+		return true;
+	}
+
+	@ConfigItem(
+			keyName = SHOOTING_STAR_SHOW_SIDEBAR_ICON,
+			position = 19,
+			name = "Show side panel",
+			description = "Show the side panel with landing times"
+	)
+	default boolean showSidebarIcon() {
 		return true;
 	}
 }

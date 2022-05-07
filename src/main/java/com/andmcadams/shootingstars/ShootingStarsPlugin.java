@@ -214,6 +214,11 @@ public class ShootingStarsPlugin extends Plugin
 				loadPluginPanel();
 				updatePanelList();
 				break;
+			case ShootingStarsConfig.SHOOTING_STAR_SHOW_SIDEBAR_ICON:
+				if (config.showSidebarIcon())
+					clientToolbar.addNavigation(navButton);
+				else
+					clientToolbar.removeNavigation(navButton);
 			default:
 				updatePanelList();
 				break;
@@ -239,7 +244,8 @@ public class ShootingStarsPlugin extends Plugin
 		}
 
 		navButton = NavigationButton.builder().tooltip("Shooting Stars").icon(icon).priority(7).panel(shootingStarsPanel).build();
-		clientToolbar.addNavigation(navButton);
+		if (config.showSidebarIcon())
+			clientToolbar.addNavigation(navButton);
 	}
 
 	private final Pattern firstMinThenHour = Pattern.compile(".* next (\\d+) minutes to (\\d+) hours? (\\d+) .*");
