@@ -219,6 +219,7 @@ public class ShootingStarsPlugin extends Plugin
 					clientToolbar.addNavigation(navButton);
 				else
 					clientToolbar.removeNavigation(navButton);
+				break;
 			default:
 				updatePanelList();
 				break;
