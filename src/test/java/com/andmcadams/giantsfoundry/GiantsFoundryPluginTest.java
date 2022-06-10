@@ -1,13 +1,13 @@
-package com.andmcadams.exampleplugin;
+package com.andmcadams.giantsfoundry;
 
 import net.runelite.client.RuneLite;
 import net.runelite.client.externalplugins.ExternalPluginManager;
 
-public class ExamplePluginTest
+public class GiantsFoundryPluginTest
 {
 	public static void main(String[] args) throws Exception
 	{
-		ExternalPluginManager.loadBuiltin(ExamplePlugin.class);
+		ExternalPluginManager.loadBuiltin(GiantsFoundryPlugin.class);
 		RuneLite.main(args);
 	}
 }
