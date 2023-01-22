@@ -413,6 +413,10 @@ public class ShootingStarsTableRow extends JPanel
 		{
 			sb.append("S");
 		}
+		if (types.contains(WorldType.FRESH_START_WORLD))
+		{
+			sb.append("F");
+		}
 		if (types.contains(WorldType.HIGH_RISK))
 		{
 			sb.append("H");
