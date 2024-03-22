@@ -164,7 +164,7 @@ public class ShootingStarsDataManager
 					{
 						try
 						{
-							JsonArray j = new Gson().fromJson(response.body().string(), JsonArray.class);
+							JsonArray j = gson.fromJson(response.body().string(), JsonArray.class);
 							plugin.setStarData(parseData(j));
 							log.debug(j.toString());
 							plugin.setGetError(false);
