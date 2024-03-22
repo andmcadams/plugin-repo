@@ -45,7 +45,8 @@ public enum ShootingStarsLocation
 	PISCATORIS(11, "Piscatoris or the Gnome Stronghold", "Pisc/Gnome", ShootingStarsConfig::shootingStarShowPiscatorisWorlds),
 	TIRANNWN(12, "Tirannwn", "Tirannwn", ShootingStarsConfig::shootingStarShowTirannwnWorlds),
 	WILDERNESS(13, "Wilderness", "Wilderness", ShootingStarsConfig::shootingStarShowWildernessWorlds),
-	UNKNOWN(14, "Unknown", "Unknown", c -> false);
+	UNKNOWN(14, "Unknown", "Unknown", c -> false),
+	VARLAMORE(15, "Varlamore", "Varlamore", ShootingStarsConfig::shootingStarShowVarlamoreWorlds);
 
 	private int id;
 	private String name;

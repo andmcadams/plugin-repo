@@ -55,6 +55,7 @@ public interface ShootingStarsConfig extends Config
 	String SHOOTING_STAR_SHOW_PISCATORIS_KEYNAME = "piscatoris";
 	String SHOOTING_STAR_SHOW_TIRANNWN_KEYNAME = "tirannwn";
 	String SHOOTING_STAR_SHOW_WILDERNESS_KEYNAME = "wilderness";
+	String SHOOTING_STAR_SHOW_VARLAMORE_KEYNAME = "varlamore";
 	String SHOOTING_STAR_SHOW_SKILL_TOTAL_KEYNAME = "skill total";
 	String SHOOTING_STAR_SHOW_SIDEBAR_ICON = "sidebar icon";
 
@@ -311,6 +312,18 @@ public interface ShootingStarsConfig extends Config
 		section = toggleSection
 	)
 	default boolean shootingStarShowTirannwnWorlds()
+	{
+		return true;
+	}
+
+	@ConfigItem(
+		keyName = SHOOTING_STAR_SHOW_VARLAMORE_KEYNAME,
+		position = 19,
+		name = "Varlamore",
+		description = "Show scouted Varlamore worlds",
+		section = toggleSection
+	)
+	default boolean shootingStarShowVarlamoreWorlds()
 	{
 		return true;
 	}
