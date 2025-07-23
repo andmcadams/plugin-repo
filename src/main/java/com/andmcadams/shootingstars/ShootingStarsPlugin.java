@@ -47,6 +47,7 @@ import net.runelite.api.Client;
 import net.runelite.api.GameState;
 import net.runelite.api.events.ChatMessage;
 import net.runelite.api.events.GameTick;
+import net.runelite.api.gameval.InterfaceID;
 import net.runelite.api.widgets.ComponentID;
 import net.runelite.api.widgets.Widget;
 import net.runelite.client.callback.ClientThread;
@@ -268,15 +269,14 @@ public class ShootingStarsPlugin extends Plugin
 	public void onGameTick(GameTick gameTick)
 	{
 		handleHop();
-
-		Widget chatbox = client.getWidget(229, 1);
-		if (chatbox != null)
+		Widget messageBoxTextWidget = client.getWidget(InterfaceID.Messagebox.TEXT);
+		if (messageBoxTextWidget != null)
 		{
 			int world = client.getWorld();
-			ShootingStarsLocation loc = ShootingStarsLocation.determineLocation(chatbox.getText());
+			ShootingStarsLocation loc = ShootingStarsLocation.determineLocation(messageBoxTextWidget.getText());
 			if (world != lastWorld || (loc != null && loc != lastLoc))
 			{
-				String text = chatbox.getText();
+				String text = messageBoxTextWidget.getText();
 				text = text.replace("<br>", " ");
 
 				Matcher m = firstMinThenHour.matcher(text);
