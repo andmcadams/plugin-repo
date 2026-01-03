@@ -6,11 +6,9 @@ The following information is sent to the server when you have looked through a t
 * Minimum and maximum time for the star to land
 * Keyword used to store your data
 
-The default server ([here](https://github.com/andmcadams/shooting-stars-server)) does not encrypt any of your data.
+The code that the default server is based on can be found [here](https://github.com/andmcadams/shooting-stars-server). Note that it does not encrypt any of your data.
 
-Please keep in mind that I work on this and host a default endpoint for fun. I have other obligations outside of this,
-and while I do work on it from time to time, this is not what I spend all my time on. With that in mind, please be
-patient with any PRs/issues that come up but if I haven't responded in a week or so, feel free to poke me again.
+**The default endpoints have been changed as of 2026 to ones hosted by the starminers clan.** I do not own the infra that these endpoints are hosted on. They may break in the future, requiring you to use a different set of endpoints. Feel free to open any issues related to changing those here, or reach out to their clan if needed. In general, most people use one of several third party websites instead of this plugin to view found stars. This plugin is mostly used by those scouting stars.
 
 ## Why is there a warning when I download this plugin?
 When installing this plugin, the following warning appears:
@@ -55,17 +53,6 @@ Any features that are meant to share the tier of a seen star or its exact locati
 previously considered, but it is very difficult to verify this kind of report and only encourages people to send fake
 data to the plugin or turn the plugin off while mining stars. Anyway, this is tricky to display while keeping a clean
 UI.
-
-### Any changes that benefit a specific clan or clans in general
-This plugin is not meant to help any clan or clans in general. If you want to make a plugin for a clan, you are more
-than welcome to clone this repo and rebrand it with your endpoints. Clans are more than welcome to use this plugin,
-as is anyone else, but they are not the target audience of this plugin.
-
-### Any changes to accommodate an endpoint not hosted by me
-This includes anything from sending extra info to the endpoints to changing the default endpoint. I don't have control
-over other people's servers, and I have no idea what they are using the extra info for. Of course, you are always welcome
-to clone this repo and make changes to it for your use case. That way users can download your plugin separately and know
-what info they are passing off to you.
 
 ### Reducing restrictions on shared keys 
 Shared keys are restricted in order to reduce the likelihood of someone using a real password.
