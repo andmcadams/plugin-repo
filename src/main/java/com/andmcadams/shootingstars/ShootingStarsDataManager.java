@@ -99,10 +99,16 @@ public class ShootingStarsDataManager
 
 	protected void makePostRequest(List<Object> temp)
 	{
+		String endpoint = plugin.getShootingStarPostEndpoint();
+		if (endpoint == null || endpoint.isEmpty()) {
+			plugin.setGetError(true);
+			log.debug("POST endpoint not set");
+			return;
+		}
 		try
 		{
 			Request r = new Request.Builder()
-				.url(plugin.getShootingStarPostEndpoint())
+				.url(endpoint)
 				.addHeader("Authorization", plugin.getShootingStarsSharedKey())
 				.post(RequestBody.create(JSON, gson.toJson(temp)))
 				.build();
@@ -142,10 +148,16 @@ public class ShootingStarsDataManager
 
 	protected void makeGetRequest()
 	{
+		String endpoint = plugin.getShootingStarGetEndpoint();
+		if (endpoint == null || endpoint.isEmpty()) {
+			plugin.setGetError(true);
+			log.debug("GET endpoint not set");
+			return;
+		}
 		try
 		{
 			Request r = new Request.Builder()
-				.url(plugin.getShootingStarGetEndpoint())
+				.url(endpoint)
 				.addHeader("Authorization", plugin.getShootingStarsSharedKey())
 				.build();
 			okHttpClient.newCall(r).enqueue(new Callback()

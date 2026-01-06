@@ -8,7 +8,7 @@ The following information is sent to the server when you have looked through a t
 
 The code that the default server is based on can be found [here](https://github.com/andmcadams/shooting-stars-server). Note that it does not encrypt any of your data.
 
-**The default endpoints have been changed as of 2026 to ones hosted by the starminers clan.** I do not own the infra that these endpoints are hosted on. They may break in the future, requiring you to use a different set of endpoints. Feel free to open any issues related to changing those here, or reach out to their clan if needed. In general, most people use one of several third party websites instead of this plugin to view found stars. This plugin is mostly used by those scouting stars.
+**The default endpoints have been removed since I have shutdown the server.** You may opt to use the ones hosted by the starminers clan at `https://telescope.starminers.site`. However, I do not own the infra that these endpoints are hosted on. They may break in the future, requiring you to use a different set of endpoints. Feel free to open any issues related to changing those here, or reach out to their clan if needed. In general, most people use one of several third party websites instead of this plugin to view found stars. This plugin is mostly used by those scouting stars.
 
 ## Why is there a warning when I download this plugin?
 When installing this plugin, the following warning appears:
