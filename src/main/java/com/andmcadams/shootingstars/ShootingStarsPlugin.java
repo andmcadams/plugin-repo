@@ -24,7 +24,10 @@
  */
 package com.andmcadams.shootingstars;
 
+import com.andmcadams.shootingstars.ui.ShootingStarsPanelType;
 import com.andmcadams.shootingstars.ui.ShootingStarsPluginPanelBase;
+import com.andmcadams.shootingstars.ui.condensed.ShootingStarsCondensedPluginPanel;
+import com.andmcadams.shootingstars.ui.panels.ShootingStarsPluginPanel;
 import com.google.inject.Provides;
 import java.awt.image.BufferedImage;
 import java.time.Duration;
@@ -234,15 +237,16 @@ public class ShootingStarsPlugin extends Plugin
 			clientToolbar.removeNavigation(navButton);
 		}
 
-		Class<? extends ShootingStarsPluginPanelBase> clazz = config.shootingStarsPanelType().getPanelClass();
-		try
+		ShootingStarsPanelType panelType = config.shootingStarsPanelType();
+		switch (panelType)
 		{
-			shootingStarsPanel = clazz.getDeclaredConstructor(this.getClass()).newInstance(this);
-		}
-		catch (Exception e)
-		{
-			log.error("Error loading panel class", e);
-			return;
+			case CONDENSED:
+				shootingStarsPanel = new ShootingStarsCondensedPluginPanel(this);
+				break;
+			case LARGE_PANELS:
+			default:
+				shootingStarsPanel = new ShootingStarsPluginPanel(this);
+				break;
 		}
 
 		navButton = NavigationButton.builder().tooltip("Shooting Stars").icon(icon).priority(7).panel(shootingStarsPanel).build();

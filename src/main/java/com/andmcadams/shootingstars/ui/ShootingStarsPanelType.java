@@ -24,8 +24,6 @@
  */
 package com.andmcadams.shootingstars.ui;
 
-import com.andmcadams.shootingstars.ui.condensed.ShootingStarsCondensedPluginPanel;
-import com.andmcadams.shootingstars.ui.panels.ShootingStarsPluginPanel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -33,12 +31,11 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum ShootingStarsPanelType
 {
-	LARGE_PANELS("Large Panels", ShootingStarsPluginPanel.class.asSubclass(ShootingStarsPluginPanelBase.class)),
-	CONDENSED("Condensed", ShootingStarsCondensedPluginPanel.class.asSubclass(ShootingStarsPluginPanelBase.class))
+	LARGE_PANELS("Large Panels"),
+	CONDENSED("Condensed")
 	;
 
 	private final String name;
-	private final Class<? extends ShootingStarsPluginPanelBase> panelClass;
 
 	@Override
 	public String toString()
